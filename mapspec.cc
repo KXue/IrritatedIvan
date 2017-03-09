@@ -1,0 +1,80 @@
+#include "mapspec.hpp"
+#include "json.hpp"
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+using namespace std;
+using json = nlohmann::json;
+
+MapSpec::MapSpec(const string &fileLocation) {
+  fstream specFile(fileLocation);
+  json j;
+  specFile >> j;
+  m_WallProbability = j["wallpercent"].get<unsigned short>();
+  m_FilterSteps = j["steps"].get<unsigned short>();
+  m_Radii =
+      vector<vector<unsigned short>>(m_FilterSteps, vector<unsigned short>(0));
+  m_MinMax = vector<vector<unsigned short>>(m_FilterSteps);
+  for (int i = 0; i < j["steplist"].size(); i++) {
+    m_Specifiers.push_back(
+        j["steplist"][i]["specifiers"].get<unsigned short>());
+    m_Iterations.push_back(
+        j["steplist"][i]["iterations"].get<unsigned short>());
+    for (int k = 0; k < j["steplist"][i]["radii"].size(); k++) {
+      m_Radii[i].push_back(j["steplist"][i]["radii"][k]);
+      m_MinMax[i].push_back(j["steplist"][i]["minmax"][k][0]);
+      m_MinMax[i].push_back(j["steplist"][i]["minmax"][k][1]);
+    }
+  }
+}
+string MapSpec::ToString() const {
+  stringstream ss;
+  ss << GetWallProbability() << endl;
+  ss << GetStepCount() << endl;
+  for (int i = 0; i < GetStepCount(); i++) {
+    ss << GetSpecifier(i) << endl;
+    ss << GetIteration(i) << endl;
+    for (int j = 0; j < GetSpecifier(i); j++) {
+      int min;
+      int max;
+      GetMinMax(i, j, min, max);
+      ss << min << " " << max << endl;
+      ss << GetRadius(i, j) << endl;
+    }
+  }
+  return ss.str();
+}
+
+unsigned short MapSpec::GetWallProbability() const { return m_WallProbability; }
+unsigned short MapSpec::GetStepCount() const { return m_FilterSteps; }
+unsigned short MapSpec::GetSpecifier(const int &step) const {
+  unsigned short outValue = -1;
+  if (step <= m_FilterSteps) {
+    outValue = m_Specifiers[step];
+  }
+  return outValue;
+}
+unsigned short MapSpec::GetIteration(const int &step) const {
+  unsigned short outValue = -1;
+  if (step <= m_FilterSteps) {
+    outValue = m_Iterations[step];
+  }
+  return outValue;
+}
+unsigned short MapSpec::GetRadius(const int &step, const int &specifier) const {
+  unsigned short outValue = -1;
+  if (step <= m_FilterSteps && specifier <= m_Specifiers[step]) {
+    outValue = m_Radii[step][specifier];
+  }
+  return outValue;
+}
+void MapSpec::GetMinMax(const int &step, const int &specifier, int &min,
+                        int &max) const {
+  min = -1;
+  max = -1;
+  if (step <= m_FilterSteps && specifier <= m_Specifiers[step] * 2) {
+    min = m_MinMax[step][specifier * 2];
+    max = m_MinMax[step][specifier * 2 + 1];
+  }
+}

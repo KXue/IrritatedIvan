@@ -1,0 +1,18 @@
+{
+  "wallpercent" : 50,
+  "steps" : 2,
+  "steplist" :[
+    {
+      "iterations" : 1,
+      "specifiers" : 2,
+      "radii" : [1, 2],
+      "minmax" : [[5, 9],[0, 2]]
+    },
+    {
+      "iterations" : 1,
+      "specifiers" : 1,
+      "radii" : [1],
+      "minmax" : [[5, 9]]
+    }
+  ]
+}
