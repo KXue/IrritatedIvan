@@ -2,15 +2,38 @@
 #include "json.hpp"
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 
 using namespace std;
 using json = nlohmann::json;
 
-MapSpec::MapSpec(const string &fileLocation) {
+MapSpec::MapSpec(const string &fileLocation) : m_Width(80), m_Height(200) {
   fstream specFile(fileLocation);
   json j;
   specFile >> j;
+
+  if (j.find("width") != j.end()) {
+    m_Width = j["width"].get<unsigned short>();
+  }
+
+  if (j.find("height") != j.end()) {
+    m_Height = j["height"].get<unsigned short>();
+  }
+
+  if (j.find("seed") != j.end()) {
+    if (m_pSeed) {
+      delete m_pSeed;
+    }
+    unsigned int a[j["seed"].size()];
+    for (int i = 0; i < j["seed"].size(); i++) {
+      a[i] = j["seed"][i].get<unsigned int>();
+    }
+    m_pSeed = new seed_seq(a, a + j["seed"].size());
+  } else {
+    m_pSeed = new seed_seq();
+  }
+
   m_WallProbability = j["wallpercent"].get<unsigned short>();
   m_FilterSteps = j["steps"].get<unsigned short>();
   m_Radii =
@@ -27,6 +50,10 @@ MapSpec::MapSpec(const string &fileLocation) {
       m_MinMax[i].push_back(j["steplist"][i]["minmax"][k][1]);
     }
   }
+}
+MapSpec::~MapSpec() {
+  delete m_pSeed;
+  m_pSeed = nullptr;
 }
 string MapSpec::ToString() const {
   stringstream ss;
@@ -45,7 +72,9 @@ string MapSpec::ToString() const {
   }
   return ss.str();
 }
-
+unsigned short MapSpec::GetWidth() const { return m_Width; }
+unsigned short MapSpec::GetHeight() const { return m_Height; }
+seed_seq *MapSpec::GetSeed() const { return m_pSeed; }
 unsigned short MapSpec::GetWallProbability() const { return m_WallProbability; }
 unsigned short MapSpec::GetStepCount() const { return m_FilterSteps; }
 unsigned short MapSpec::GetSpecifier(const int &step) const {
