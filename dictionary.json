@@ -1,0 +1,101 @@
+[
+  {
+    "term" : "north",
+    "type" : "direction",
+    "alternatives" : ["n", "N", "North", "NORTH"],
+    "vector" : [0, -1],
+    "description": "The North (up) direction."
+  },
+  {
+    "term" : "south",
+    "type" : "direction",
+    "alternatives" : ["s", "S", "South", "SOUTH"],
+    "vector" : [0, 1],
+    "description": "The South (down) direction."
+  },
+  {
+    "term" : "east",
+    "type" : "direction",
+    "alternatives" : ["e", "E", "East", "EAST"],
+    "vector" : [-1, 0],
+    "description": "The East (left) direction"
+  },
+  {
+    "term" : "west",
+    "type" : "direction",
+    "alternatives" : ["w", "W", "West", "WEST"],
+    "vector" : [1, 0],
+    "description": "The West (right) direction."
+  },
+  {
+    "term" : "northeast",
+    "type" : "direction",
+    "alternatives" : ["ne", "NE", "NorthEast", "Northeast", "NORTHEAST"],
+    "vector" : [-1, -1],
+    "description": "The NorthEast (up and left) direction. Moving this way still takes only 1 action."
+  },
+  {
+    "term" : "southeast",
+    "type" : "direction",
+    "alternatives" : ["se", "SE", "SouthEast", "Southeast", "SOUTHEAST"],
+    "vector" : [-1, 1],
+    "description": "The SouthEast (down and left) direction. Moving this way still takes only 1 action."
+  },
+  {
+    "term" : "northwest",
+    "type" : "direction",
+    "alternatives" : ["nw", "NW", "NorthWest", "Northwest", "NORTHWEST"],
+    "vector" : [1, -1],
+    "description": "The NorthWest (up and right) direction. Moving this way still takes only 1 action."
+  },
+  {
+    "term" : "southwest",
+    "type" : "direction",
+    "alternatives" : ["sw", "SW", "SouthWest", "Southwest", "SOUTHWEST"],
+    "vector" : [1, 1],
+    "description": "The SouthWest (down and right) direction. Moving this way still takes only 1 action."
+  },
+
+  {
+    "term" : "move",
+    "type" : "verb",
+    "alternatives" : ["m", "M","Move", "MOVE"],
+    "description" : "The move action. Moves the player in a direction by 1 unit. Uses 1 action. Must be followed up with a direction."
+  },
+  {
+    "term" : "look",
+    "type" : "verb",
+    "alternatives" : ["l", "L","Look", "LOOK"],
+    "description" : "The look action. Looks at anything 1 unit away. Uses 0 actions. Must be followed up with a direction."
+  },
+  {
+    "term" : "attack",
+    "type" : "verb",
+    "alternatives" : ["a", "A","Attack", "ATTACK"],
+    "description" : "The attack action. Makes the player attack 1 unit away. Uses 1 action if there's something to attack in that direction, 0 otherwise. Must be followed up with a direction."
+  },
+  {
+    "term" : "use",
+    "type" : "verb",
+    "alternatives" : ["u", "U","Use", "USE"],
+    "description" : "The use action. Makes the player use an item 1 unit away. Uses 1 action if there's something to use in that direction, 0 otherwise. Must be followed up with a direction."
+  },
+  {
+    "term" : "again",
+    "type" : "macro",
+    "alternatives" : [".", "Again", "AGAIN"],
+    "description" : "The again macro. Repeats the last successful action."
+  },
+  {
+    "term" : "help",
+    "type" : "macro",
+    "alternatives" : ["h", "H", "HELP", "Help"],
+    "description" : "The help macro. Lists all commands and their descriptions."
+  },
+  {
+    "term" : "quit",
+    "type" : "macro",
+    "alternatives" : ["q", "Q", "QUIT", "Quit"],
+    "description" : "The quit macro. Exits the game."
+  }
+]

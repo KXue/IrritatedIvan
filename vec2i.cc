@@ -23,6 +23,11 @@ void Vec2i::operator=(const Vec2i &other){
   x = other.x;
   y = other.y;
 }
+
+bool Vec2i::operator==(const Vec2i &other)const{
+  return (x == other.x && y == other.y);
+}
+
 Vec2i operator+(const Vec2i &first, const Vec2i &second) {
   return Vec2i(first.x + second.x, first.y + second.y);
 }

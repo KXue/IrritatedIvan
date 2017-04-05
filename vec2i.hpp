@@ -13,6 +13,7 @@ public:
   Vec2i(int, int);
   Vec2i(const Vec2i &);
   void operator=(const Vec2i &);
+  bool operator==(const Vec2i&)const;
   string ToString() const;
   int GetX() const;
   int GetY() const;

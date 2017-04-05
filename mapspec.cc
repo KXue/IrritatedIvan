@@ -1,7 +1,6 @@
 #include "mapspec.hpp"
 #include "json.hpp"
 #include <fstream>
-#include <iostream>
 #include <iterator>
 #include <sstream>
 
