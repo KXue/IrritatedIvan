@@ -8,13 +8,15 @@
 using namespace std;
 
 class Character;
-class Input;
+class InManager;
+class OutManager;
 class GameMap;
 //class MapSpec;
 
 class Game{
 vector<GameMap*> m_pMap;
-Input* m_pInput;
+OutManager* m_pOutput;
+InManager* m_pInput;
 Character* m_pPlayer;
 RNG* m_pGenerator;
 MapSpec m_Spec;
@@ -28,7 +30,10 @@ public:
   Game();
   ~Game();
   void Start();
-  void QuitFunction();
+  void QuitMacro();
+  void RedoMacro();
+  void HelpMacro();
+
 };
 
 #endif

@@ -1,12 +1,17 @@
 #include "gamemap.hpp"
 #include "mapspec.hpp"
+#include "entity.hpp"
+#include "character.hpp"
 #include "useful.hpp"
 #include "vec2i.hpp"
+
 #include <algorithm>
 #include <iostream>
 #include <sstream>
 
-int const GameMap::DIRECTIONS[8][2] = {{1, 0},  {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1},  {1, 1}};
+//Helper functions for raffle draw system
+
+//prints the number of tickets each tile on the map has
 void printLot(const vector<vector<unsigned int>> &lot) {
   for (int row = 0; row < lot.size(); row++) {
     for (int col = 0; col < lot[row].size(); col++) {
@@ -23,6 +28,8 @@ void printLot(const vector<vector<unsigned int>> &lot) {
     cout << endl;
   }
 }
+
+//Assigns each floor tile with the maximum raffle value
 void FirstPass(vector<vector<unsigned int>> &lot, const vector<vector<MapType>> &map, const int &maxRaffle) {
   for (int row = 0; row < lot.size(); row++) {
     for (int col = 0; col < lot[row].size(); col++) {
@@ -34,6 +41,8 @@ void FirstPass(vector<vector<unsigned int>> &lot, const vector<vector<MapType>> 
     }
   }
 }
+
+//Gets the sum of the raffle tickets of all the tiles.
 unsigned int GetRaffleMax(const vector<vector<unsigned int>> &lot) {
   int count = 0;
   for (int row = 0; row < lot.size(); row++) {
@@ -43,6 +52,8 @@ unsigned int GetRaffleMax(const vector<vector<unsigned int>> &lot) {
   }
   return count;
 }
+
+//Gets the raffle winner tile.
 Vec2i GetRafflePosition(const unsigned int &raffle, const vector<vector<unsigned int>> &lot) {
   Vec2i position = Vec2i(-1, -1);
   unsigned int count = 0;
@@ -57,6 +68,17 @@ Vec2i GetRafflePosition(const unsigned int &raffle, const vector<vector<unsigned
   }
   return position; // SHOULD NEVER HAPPEN
 }
+
+int const GameMap::DIRECTIONS[8][2] = {{1, 0},  {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1},  {1, 1}};
+
+GameMap::GameMap(const MapSpec &spec, RNG *gen) : m_pPlayer(nullptr), m_MaxRaffle(9), m_pGenerator(gen) {
+  m_Width = spec.GetWidth();
+  m_Height = spec.GetHeight();
+  m_Map = vector<vector<MapType>>(m_Height, vector<MapType>(m_Width, MapType::wall));
+  GenerateMap(spec);
+}
+GameMap::~GameMap() {}
+
 void ReassignRaffle(const unsigned int &maxSquareRadius, const int &maxRaffle, const Vec2i &point, vector<vector<unsigned int>> &lot, const int &offset) {
   int r, c;
   int squareRadius;
@@ -121,6 +143,7 @@ void GameMap::GenerateFromSpec(const MapSpec &spec) {
         }
       }
       m_Map = newMap;
+
     }
   }
 }
@@ -147,80 +170,9 @@ bool GameMap::TryAddEntity(Entity *entity){
   return success;
 }
 
-/*
-vector<vector<MapType>>
-GameMap::CellularAutomataFilterStep(const int minMaxArray[][2],
-                                    const int radii[], const size_t &n) const {
-  bool isWall = false;
-  int wallCount = 0;
-  vector<vector<MapType>> newMap(m_Height,
-                                 vector<MapType>(m_Width, MapType::wall));
+// Functions used for checking for disconnected bubbles.
 
-  for (int row = 0; row < m_Height; row++) {
-    for (int col = 0; col < m_Width; col++) {
-      isWall = false;
-
-      for (int j = 0; j < n; j++) {
-        wallCount = CountWalls(row, col, radii[j], true);
-        isWall |=
-            (wallCount >= minMaxArray[j][0] && wallCount <= minMaxArray[j][1]);
-        if (isWall) {
-          newMap[row][col] = MapType::wall;
-          break;
-        }
-      }
-
-      if (!isWall) {
-        newMap[row][col] = MapType::floor;
-      }
-    }
-  }
-  return newMap;
-}
-void GameMap::CellularAutomataGenerate(const int &wallPercentage,
-                                       const int &roughIterations,
-                                       const int &smoothIterations) {
-  minstd_rand0 m_pGenerator;
-  vector<vector<MapType>> newMap(m_Height,
-                                 vector<MapType>(m_Width, MapType::wall));
-  for (int row = 0; row < m_Height; row++) {
-    for (int col = 0; col < m_Width; col++) {
-      if (m_pGenerator() % 100 < 45) {
-        newMap[row][col] = MapType::wall;
-      } else {
-        newMap[row][col] = MapType::floor;
-      }
-    }
-  }
-  m_Map = newMap;
-  for (int i = 0; i < roughIterations; i++) {
-    for (int row = 0; row < m_Height; row++) {
-      for (int col = 0; col < m_Width; col++) {
-        if (CountWalls(row, col, 1, true) >= 5 ||
-            CountWalls(row, col, 2, true) <= 1) {
-          newMap[row][col] = MapType::wall;
-        } else {
-          newMap[row][col] = MapType::floor;
-        }
-      }
-    }
-    m_Map = newMap;
-  }
-  for (int i = 0; i < smoothIterations; i++) {
-    for (int row = 0; row < m_Height; row++) {
-      for (int col = 0; col < m_Width; col++) {
-        if (CountWalls(row, col, 1, true) >= 5) {
-          newMap[row][col] = MapType::wall;
-        } else {
-          newMap[row][col] = MapType::floor;
-        }
-      }
-    }
-    m_Map = newMap;
-  }
-}
-*/
-
+// Checks if any bubbles exist
 bool GameMap::IsConnected() {
   int row;
   int col;
@@ -235,6 +187,8 @@ bool GameMap::IsConnected() {
   FloodArea(row, col, traversed, count);
   return count == TotalArea();
 }
+// FloodArea and TotalArea should be equal if there are no bubbles
+// Recursively floods the map, incrementing a counter each time it hits an untraversed floor.
 void GameMap::FloodArea(const int &row, const int &col, vector<vector<bool>> &traversed, unsigned int &count) const {
   if (row < 0 || row >= m_Height || col < 0 || col >= m_Width || traversed[row][col] || m_Map[row][col] != MapType::floor) {
     return;
@@ -246,6 +200,7 @@ void GameMap::FloodArea(const int &row, const int &col, vector<vector<bool>> &tr
     }
   }
 }
+// Iterates through the map, incrementing a counter each time it hits an untraversed floor.
 unsigned short GameMap::TotalArea() const {
   unsigned short area = 0;
   for (int row = 0; row < m_Height; row++) {
@@ -257,13 +212,8 @@ unsigned short GameMap::TotalArea() const {
   }
   return area;
 }
-GameMap::GameMap(const MapSpec &spec, RNG *gen) : m_MaxRaffle(9), m_pGenerator(gen) {
-  m_Width = spec.GetWidth();
-  m_Height = spec.GetHeight();
-  m_Map = vector<vector<MapType>>(m_Height, vector<MapType>(m_Width, MapType::wall));
-  GenerateMap(spec);
-}
-GameMap::~GameMap() {}
+
+
 string GameMap::ToString() const {
   stringstream ss;
   for (int row = 0; row < m_Height; row++) {
@@ -274,6 +224,9 @@ string GameMap::ToString() const {
   string map = ss.str();
   for(auto &element : m_Entities){
     map[GetLineCoord(element->GetPosition())] = (char)element->GetType();
+  }
+  if(m_pPlayer){
+    map[GetLineCoord(m_pPlayer->GetPosition())] = (char)m_pPlayer->GetType();
   }
   for(int i = m_Width * m_Height; i > 0; i -= m_Width){
     map.insert(i, 1, '\n');
@@ -347,9 +300,12 @@ int GameMap::GetLineCoord(const Vec2i &point) const {
   if (c < m_Width && c >= 0 && r < m_Height && r >= 0) {
     retVal = c + r * m_Width;
   }
-  cout << retVal << endl;
   return retVal;
 }
+
+// Game object access and modification
+
+//Gets the tile at position
 MapType GameMap::GetTileAt(const Vec2i &point) const {
   int r, c;
   point.GetCoords(c, r);
@@ -367,11 +323,15 @@ MapType GameMap::GetTileAt(const Vec2i &point) const {
   }
   return retVal;
 }
+//Gets the entity at a point if it exists, returns false if not found.
 bool GameMap::TryGetEntityAt(const Vec2i &point, Entity *result){
   bool found = false;
   for(int i = 0; i < m_Entities.size(); i++){
     if(point == m_Entities[i]->GetPosition()){
       found = true;
+      // if(result){
+      //   delete result;
+      // }
       result = m_Entities[i];
       break;
     }

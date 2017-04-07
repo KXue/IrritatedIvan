@@ -21,9 +21,7 @@ MapSpec::MapSpec(const string &fileLocation) : m_Width(80), m_Height(200) {
   }
 
   if (j.find("seed") != j.end()) {
-    if (m_pSeed) {
-      delete m_pSeed;
-    }
+
     unsigned int a[j["seed"].size()];
     for (int i = 0; i < j["seed"].size(); i++) {
       a[i] = j["seed"][i].get<unsigned int>();

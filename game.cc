@@ -1,5 +1,6 @@
 #include "game.hpp"
-#include "input.hpp"
+#include "inmanager.hpp"
+#include "outmanager.hpp"
 #include "gamemap.hpp"
 #include "character.hpp"
 #include "pig.hpp"
@@ -16,17 +17,22 @@ void Game::MainLoop(){
 
 }
 Game::Game() : m_IsPlaying(true){
-  m_pInput = new Input();
-  m_pInput->AddQuitFunction(&Game::QuitFunction);
+  cout << "Game" << endl;
+  m_pInput = new InManager();
+  m_pInput->AddQuitFunction(&Game::QuitMacro);
+  cout << "Quit" << endl;
   m_pGenerator = new RNG(*m_Spec.GetSeed());
 
   for(int i = 0; i < 5; i++){
     m_pMap.push_back(new GameMap(m_Spec, m_pGenerator));
+    cout << m_pMap[i]->ToString() << endl;
   }
 
   m_pMap[0]->ResetRaffle();
   Vec2i playerPosition = m_pMap[0]->RafflePull(1, 10, 5)[0];
+  cout << playerPosition.ToString();
   m_pPlayer = new Pig(playerPosition, m_pMap[0], true);
+  cout << "Player" << endl;
 
   if(!m_pMap[0]->TryAddEntity(m_pPlayer)){
     cout << "Something went wrong with adding character to map";
@@ -36,6 +42,10 @@ Game::Game() : m_IsPlaying(true){
   m_pInput->AddFunction("attack", &Character::Attack);
   m_pInput->AddFunction("use", &Character::Use);
   m_pInput->AddFunction("look", &Character::Look);
+
+  m_pInput->AddMacro("quit", &Game::QuitMacro);
+  m_pInput->AddMacro("again", &Game::RedoMacro);
+  m_pInput->AddMacro("help", &Game::HelpMacro);
 }
 Game::~Game(){
   delete m_pInput;
@@ -43,6 +53,7 @@ Game::~Game(){
   for(int i = 0; i < m_pMap.size(); i++){
     delete m_pMap[i];
   }
+  delete m_pOutput;
 }
 void Game::Start(){
   m_IsPlaying = true;
@@ -57,6 +68,15 @@ void Game::Start(){
     }
   }
 }
-void Game::QuitFunction(){
+void Game::QuitMacro(){
   m_IsPlaying = false;
+}
+void Game::RedoMacro(){
+  cout << m_pPlayer->RedoAction(false);
+}
+void Game::HelpMacro(){
+  cout << m_pInput->ToString() << endl;
+  cout << "Press enter to continue: ";
+  string temp;
+  getline(cin, temp);
 }

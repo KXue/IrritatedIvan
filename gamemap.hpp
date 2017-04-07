@@ -1,8 +1,6 @@
 #ifndef GAMEMAP_H
 #define GAMEMAP_H
 
-#include "entity.hpp"
-#include "mapspec.hpp"
 #include "maptype.hpp"
 #include "shared.hpp"
 #include <random>
@@ -13,12 +11,16 @@
 using namespace std;
 
 class Vec2i;
+class Character;
+class Entity;
+class MapSpec;
 
 class GameMap {
   // Map's size will be set once and never be touched again.
   vector<vector<MapType>> m_Map;
   vector<vector<unsigned int>> m_ProbabilityDistribution;
   vector<Entity*> m_Entities;
+  Character* m_pPlayer;
   int m_Width;
   int m_Height;
   unsigned int m_MaxRaffle;

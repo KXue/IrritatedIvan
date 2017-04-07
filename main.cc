@@ -10,7 +10,7 @@ void quit(){
   isQuit = true;
 }
 int main(int argc, char const *argv[]) {
-  MapSpec spec;
+  cout << "START" << endl;
   Game game;
   game.Start();
   return 0;

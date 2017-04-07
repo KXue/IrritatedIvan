@@ -1,8 +1,8 @@
-OBJS = main.o game.o vec2i.o gamemap.o input.o mapspec.o entity.o character.o pig.o
-CC = clang++
+OBJS = main.o game.o vec2i.o gamemap.o inmanager.o mapspec.o entity.o character.o pig.o outmanager.o
+CC = g++
 SDL = -lSDL2 -lSDL2_ttf -lSDL2_image
 CFLAGS = -Wall -c -std=c++11 $(DEBUG)
-LFLAGS = -Wall $(SDL) -std=c++11 $(DEBUG)
+LFLAGS = -Wall -std=c++11 $(DEBUG)
 EXE = run_this
 
 all: $(EXE)
@@ -14,7 +14,9 @@ main.o: main.cc
 	$(CC) $(CFLAGS) $< -o $@
 mapspec.o: mapspec.cc
 	$(CC) $(CFLAGS) $< -o $@
-input.o: input.cc
+inmanager.o: inmanager.cc
+	$(CC) $(CFLAGS) $< -o $@
+outmanager.o: outmanager.cc
 	$(CC) $(CFLAGS) $< -o $@
 vec2i.o: vec2i.cc
 	$(CC) $(CFLAGS) $< -o $@
@@ -28,5 +30,6 @@ character.o: character.cc
 	$(CC) $(CFLAGS) $< -o $@
 pig.o: pig.cc
 	$(CC) $(CFLAGS) $< -o $@
+
 clean:
 	rm *.o && rm $(EXE)

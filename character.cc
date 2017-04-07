@@ -17,6 +17,7 @@ string Character::Move(const Vec2i &direction, bool quiet) {
   ss << GetName(true) << " moves to " << newPosition.GetX() << ", "<< newPosition.GetY() << ".";
   if (m_pMap->GetTileAt(newPosition) == MapType::floor) {
     m_Position = newPosition;
+    SetLastAction(&Character::Move, direction);
     m_Actions--;
   }else{
     ss << " But something got in the way!";
@@ -35,6 +36,8 @@ string Character::Attack(const Vec2i &direction, bool quiet) {
 
   if(m_pMap->TryGetEntityAt(newPosition, target)){
     ss << target->GetAttacked(m_Attack, *this);
+    SetLastAction(&Character::Attack, direction);
+    m_Actions--;
   }
   else{
     ss << "But there's nothing there so " << GetName() << " decides not to attack.";
@@ -55,6 +58,7 @@ string Character::Use(const Vec2i &direction, bool quiet) {
 
   if(m_pMap->TryGetEntityAt(newPosition, target)){
     ss << target->GetUsed(*this);
+    SetLastAction(&Character::Use, direction);
   }
   else{
     ss << "But there's nothing there so " << GetName() << " decides not to do anything.";
@@ -67,13 +71,25 @@ string Character::Use(const Vec2i &direction, bool quiet) {
   }
   return ss.str();
 }
-string Character::Look(const Vec2i & direction, bool quiet)const{
+
+string Character::RedoAction(bool quiet){
+  string retVal;
+  if(m_LastAction){
+    retVal = m_LastAction(*this, m_LastDirection, quiet);
+  }else{
+    retVal = "This character hasn't done anything yet.\n";
+  }
+  return retVal;
+}
+
+string Character::Look(const Vec2i & direction, bool quiet){
   Entity *target = nullptr;
   Vec2i newPosition = m_Position + direction;
   stringstream ss;
   ss << GetName() << " looks at " << newPosition.GetX() << ", " << newPosition.GetY() << ".";
   if(m_pMap->TryGetEntityAt(newPosition, target)){
     ss << target->GetDescription();
+    SetLastAction(&Character::Look, direction);
   }
   else{
     ss << " But there's nothing there.";
@@ -121,4 +137,8 @@ string Character::GetUsed(Character &user){
 }
 string Character::GetDescription() const{
   return "This is some kind of character. Not sure what yet.";
+}
+void Character::SetLastAction(const function<string(Character&, Vec2i, bool)> &action, const Vec2i &direction){
+  m_LastAction = action;
+  m_LastDirection = direction;
 }
