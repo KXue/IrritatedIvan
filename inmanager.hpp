@@ -32,7 +32,6 @@ public:
   ~InManager();
   string ParseInput(const string&, Character&, Game&);
   void AddFunction(const string&, const function<string(Character&, const Vec2i&, bool)> &);
-  void AddQuitFunction(const function<void(Game&)>&);
   void AddMacro(const string&, const function<void(Game&)>&);
   string ToString();
 };

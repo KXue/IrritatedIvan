@@ -9,13 +9,11 @@ using namespace std;
 
 class Character;
 class InManager;
-class OutManager;
 class GameMap;
 //class MapSpec;
 
 class Game{
 vector<GameMap*> m_pMap;
-OutManager* m_pOutput;
 InManager* m_pInput;
 Character* m_pPlayer;
 RNG* m_pGenerator;

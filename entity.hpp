@@ -7,6 +7,7 @@
 #include <string>
 
 class Character;
+class OutManager;
 
 class Entity {
 protected:
@@ -17,7 +18,7 @@ public:
   virtual ~Entity() = 0;
   Vec2i GetPosition() const;
 
-  virtual string GetName(bool start = false, bool possessive = false)const = 0 ;
+  virtual string GetName()const = 0 ;
   virtual MapType GetType()const = 0;
   virtual string GetAttacked(const int&, Character &) = 0;
   virtual string GetDescription() const = 0;

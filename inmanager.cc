@@ -141,10 +141,6 @@ string InManager::ToString(){
   return ss.str();
 }
 
-void InManager::AddQuitFunction(const function<void(Game&)> &fcn){
-  m_QuitFunction = fcn;
-}
-
 void InManager::AddMacro(const string &macro, const function<void(Game&)> &fcn){
   if(m_TypeMap.find(macro) != m_TypeMap.end() && m_TypeMap[macro]==InputType::macro){
     m_MacroMap[macro] = fcn;

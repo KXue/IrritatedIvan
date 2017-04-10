@@ -1,6 +1,5 @@
 #include "game.hpp"
 #include "inmanager.hpp"
-#include "outmanager.hpp"
 #include "gamemap.hpp"
 #include "character.hpp"
 #include "pig.hpp"
@@ -19,7 +18,6 @@ void Game::MainLoop(){
 Game::Game() : m_IsPlaying(true){
   cout << "Game" << endl;
   m_pInput = new InManager();
-  m_pInput->AddQuitFunction(&Game::QuitMacro);
   cout << "Quit" << endl;
   m_pGenerator = new RNG(*m_Spec.GetSeed());
 
@@ -53,7 +51,6 @@ Game::~Game(){
   for(int i = 0; i < m_pMap.size(); i++){
     delete m_pMap[i];
   }
-  delete m_pOutput;
 }
 void Game::Start(){
   m_IsPlaying = true;
@@ -61,7 +58,7 @@ void Game::Start(){
   while(m_IsPlaying){
     cout << m_pMap[0]->ToString();
     if(getline(cin, input)){
-      m_pInput->ParseInput(input, *m_pPlayer, *this);
+      cout << m_pInput->ParseInput(input, *m_pPlayer, *this);
     }
     else{
       m_IsPlaying = false;

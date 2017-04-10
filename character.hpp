@@ -12,21 +12,24 @@ public:
             const unsigned char & = 1);
   ~Character();
   virtual string Move(const Vec2i &, bool = true);
-  virtual string Attack(const Vec2i &, bool = true);
+  virtual string Attack(const Vec2i &, bool = false);
   virtual string Use(const Vec2i &, bool = true);
   virtual string Look(const Vec2i &, bool = false);
   virtual string RedoAction(bool = false);
-  //Only reached if character is player.
-  string GetName(bool = false, bool = false)const;
 
-  MapType GetType()const;
+  //Since Character is meant to be a base class, this function should only be called by derived classes that are also players. Returns "you". Derived classes should return their class name (like "orc")
+  virtual string GetName()const;
+
+  //Since Character is meant to be a base class, this function should only be called by derived classes that are also players. Returns '@' (player symbol). Derived classes should return their map symbol (like 'o' for orc)
+  virtual MapType GetType()const;
+  //Override in derived class to create unique behavior between races/classes.
   virtual string GetAttacked(const int&, Character &);
   virtual string GetUsed(Character &);
   virtual string GetDescription() const;
 
 protected:
   GameMap *m_pMap;
-  // Don't think there's enough difference between playable and non playable characters
+  // Don't think there's enough difference between playable and non playable characters to justify making another class. Input is already handled by InManager.
   bool m_IsPlayer;
   // Stats
   unsigned int m_MaxHealth;
@@ -37,12 +40,17 @@ protected:
   unsigned char m_Actions;
   unsigned char m_ExpPercent;
 
+  string m_Name;
+
+  //Keeping these protected until I can specify nouns as well as directions
+  virtual string AttackTarget(Entity &);
+  string UseItem(Entity &);
+
   // Used for re-performing actions
-  function<string(Character&, Vec2i, bool)> m_LastAction;
+  function<string(Character&, const Vec2i&, bool)> m_LastAction;
   Vec2i m_LastDirection;
 
-  void SetLastAction(const function<string(Character&, Vec2i, bool)> &, const Vec2i &);
-  virtual void ApplyEffects(string &base, bool, bool)const;
+  void SetLastAction(const function<string(Character&, const Vec2i&, bool)> &, const Vec2i &);
 };
 
 #endif

@@ -1,7 +1,8 @@
 #include "character.hpp"
 #include "gamemap.hpp"
-#include <sstream>
+#include "useful.hpp"
 
+#include <sstream>
 Character::Character(const Vec2i &position, GameMap *map,
                      bool isPlayer,
                      const unsigned int &maxHealth,
@@ -10,17 +11,24 @@ Character::Character(const Vec2i &position, GameMap *map,
                      const unsigned char &maxActions) : Entity(position), m_pMap(map), m_IsPlayer(isPlayer), m_MaxHealth(maxHealth), m_Health(maxHealth), m_Attack(attack), m_Defense(defense), m_MaxActions(maxActions), m_Actions(maxActions), m_ExpPercent(0) {}
 
 Character::~Character() { m_pMap = nullptr; }
-
+string Character::AttackTarget(Entity &target){
+  return target.GetAttacked(m_Attack, *this);
+}
+string Character::UseItem(Entity &target){
+  return target.GetUsed(*this);
+}
 string Character::Move(const Vec2i &direction, bool quiet) {
   Vec2i newPosition = m_Position + direction;
   stringstream ss;
-  ss << GetName(true) << " moves to " << newPosition.GetX() << ", "<< newPosition.GetY() << ".";
+
   if (m_pMap->GetTileAt(newPosition) == MapType::floor) {
+    string move = m_IsPlayer? "move" : "moves";
+    ss << Capitalize(GetName()) << " " << move << " one step.";
     m_Position = newPosition;
     SetLastAction(&Character::Move, direction);
     m_Actions--;
   }else{
-    ss << " But something got in the way!";
+    ss << "Something is in the way!";
   }
   ss << endl;
   if(quiet){
@@ -32,15 +40,17 @@ string Character::Attack(const Vec2i &direction, bool quiet) {
   Entity *target = nullptr;
   Vec2i newPosition = m_Position + direction;
   stringstream ss;
-  ss << GetName(true) << " is thinking about attacking something at " << newPosition.GetX() << ", " << newPosition.GetY() << ".";
 
   if(m_pMap->TryGetEntityAt(newPosition, target)){
-    ss << target->GetAttacked(m_Attack, *this);
+    string attackString = m_IsPlayer? "attack" : "attacks";
+    ss << Capitalize(GetName()) << " " << attackString << " " << target->GetName() << ".";
+    ss << AttackTarget(*target);
     SetLastAction(&Character::Attack, direction);
     m_Actions--;
   }
   else{
-    ss << "But there's nothing there so " << GetName() << " decides not to attack.";
+    string decideString = m_IsPlayer? "decide" : "decides";
+    ss << "There's nothing there so " << GetName() << " " << decideString << " not to attack.";
   }
 
   ss << endl;
@@ -54,14 +64,17 @@ string Character::Use(const Vec2i &direction, bool quiet) {
   Entity *target = nullptr;
   Vec2i newPosition = m_Position + direction;
   stringstream ss;
-  ss << GetName() << " is thinking about using an item at " << newPosition.GetX() << ", " << newPosition.GetY() << ".";
 
   if(m_pMap->TryGetEntityAt(newPosition, target)){
-    ss << target->GetUsed(*this);
+    string useString = m_IsPlayer? "use" : "uses";
+    ss << Capitalize(GetName()) << " " << useString << " " << target->GetName() << ".";
+    ss << UseItem(*target);
     SetLastAction(&Character::Use, direction);
+    m_Actions--;
   }
   else{
-    ss << "But there's nothing there so " << GetName() << " decides not to do anything.";
+    string decideString = m_IsPlayer? "decide" : "decides";
+    ss << "There's nothing there so " << GetName() << " " << decideString <<" not to do anything.";
   }
 
   ss << endl;
@@ -69,6 +82,23 @@ string Character::Use(const Vec2i &direction, bool quiet) {
   if(quiet){
     return "";
   }
+  return ss.str();
+}
+
+string Character::Look(const Vec2i & direction, bool quiet){
+  Entity *target = nullptr;
+  Vec2i newPosition = m_Position + direction;
+  stringstream ss;
+  if(m_pMap->TryGetEntityAt(newPosition, target)){
+    string lookString = m_IsPlayer? "look" : "looks";
+    ss << Capitalize(GetName()) << " " << lookString << " at " << target->GetName() << ".";
+    ss << target->GetDescription();
+    SetLastAction(&Character::Look, direction);
+  }
+  else{
+    ss << "There's nothing there.";
+  }
+  ss << endl;
   return ss.str();
 }
 
@@ -82,35 +112,9 @@ string Character::RedoAction(bool quiet){
   return retVal;
 }
 
-string Character::Look(const Vec2i & direction, bool quiet){
-  Entity *target = nullptr;
-  Vec2i newPosition = m_Position + direction;
-  stringstream ss;
-  ss << GetName() << " looks at " << newPosition.GetX() << ", " << newPosition.GetY() << ".";
-  if(m_pMap->TryGetEntityAt(newPosition, target)){
-    ss << target->GetDescription();
-    SetLastAction(&Character::Look, direction);
-  }
-  else{
-    ss << " But there's nothing there.";
-  }
-  ss << endl;
-  return ss.str();
+string Character::GetName()const{
+  return "you";
 }
-string Character::GetName(bool start, bool possessive)const{
-  string retVal = "You";
-  ApplyEffects(retVal, start, possessive);
-  return retVal;
-}
-void Character::ApplyEffects(string &base, bool start, bool possessive)const{
-  if(possessive){
-    base += "'re";
-  }
-  if(start){
-    base[0] = tolower(base[0]);
-  }
-}
-
 MapType Character::GetType()const{
   return MapType::player;
 }
@@ -118,27 +122,28 @@ string Character::GetAttacked(const int &attackStrength, Character &attacker){
   unsigned int damageTaken = (attackStrength * (float)(10 - m_Defense) * 0.1);
 
   stringstream ss;
-  ss << GetName(true) << " takes " << damageTaken << "damage! ";
+  string takeString = m_IsPlayer? "take" : "takes";
+  ss << GetName() << " " << takeString << " " << damageTaken << "damage! ";
 
   m_Health -= damageTaken;
 
   if(m_Health <= 0){
-    ss << GetName(true) << " died!";
+    ss << GetName() << " died!";
   }else if(m_Health < (float)m_MaxHealth * 0.25){
-    ss << GetName(true) << " looks to be in rough shape!";
+    string lookString = m_IsPlayer? "look" : "looks";
+    ss << GetName() << " " << lookString << " to be in rough shape!";
   }
-
   return ss.str();
 }
 string Character::GetUsed(Character &user){
   stringstream ss;
-  ss << GetName(true) << " looks at you confusingly like \"WTF are you doing?\" You just wasted an action.";
+  ss << GetName() << " looks at you confusingly like \"WTF are you doing?\" You just wasted an action.";
   return ss.str();
 }
 string Character::GetDescription() const{
   return "This is some kind of character. Not sure what yet.";
 }
-void Character::SetLastAction(const function<string(Character&, Vec2i, bool)> &action, const Vec2i &direction){
+void Character::SetLastAction(const function<string(Character&, const Vec2i&, bool)> &action, const Vec2i &direction){
   m_LastAction = action;
   m_LastDirection = direction;
 }

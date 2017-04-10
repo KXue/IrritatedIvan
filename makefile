@@ -1,4 +1,4 @@
-OBJS = main.o game.o vec2i.o gamemap.o inmanager.o mapspec.o entity.o character.o pig.o outmanager.o
+OBJS = main.o game.o vec2i.o gamemap.o inmanager.o mapspec.o entity.o character.o pig.o useful.o decider.o
 CC = g++
 SDL = -lSDL2 -lSDL2_ttf -lSDL2_image
 CFLAGS = -Wall -c -std=c++11 $(DEBUG)
@@ -16,8 +16,6 @@ mapspec.o: mapspec.cc
 	$(CC) $(CFLAGS) $< -o $@
 inmanager.o: inmanager.cc
 	$(CC) $(CFLAGS) $< -o $@
-outmanager.o: outmanager.cc
-	$(CC) $(CFLAGS) $< -o $@
 vec2i.o: vec2i.cc
 	$(CC) $(CFLAGS) $< -o $@
 game.o: game.cc
@@ -30,6 +28,11 @@ character.o: character.cc
 	$(CC) $(CFLAGS) $< -o $@
 pig.o: pig.cc
 	$(CC) $(CFLAGS) $< -o $@
+useful.o: useful.cc
+	$(CC) $(CFLAGS) $< -o $@
+decider.o: decider.cc
+	$(CC) $(CFLAGS) $< -o $@
 
+	
 clean:
 	rm *.o && rm $(EXE)
