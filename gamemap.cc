@@ -313,6 +313,8 @@ MapType GameMap::GetTileAt(const Vec2i &point) const {
   if (r < m_Height && c < m_Width && r >= 0 && c >= 0) {
     retVal = m_Map[r][c];
   }
+  cout << point.ToString() << endl;
+  cout << m_Entities.size() << endl;
   if(retVal == MapType::floor){
     for(int i = 0; i < m_Entities.size(); i++){
       if(m_Entities[i]->GetPosition() == point){

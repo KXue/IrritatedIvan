@@ -1,8 +1,7 @@
 #include "pig.hpp"
-
-Pig::Pig(const Vec2i &p, GameMap *m, bool b) : Character(p, m, b){}
-Pig::~Pig(){}
-string Pig::Move(const Vec2i &direction, bool){
-  SetLastAction(&Character::Move, direction);
-  return "Oink";
+#include <iostream>
+Pig::Pig(const Vec2i &p, GameMap *m, bool b) : Character(p, m, b){
+  cout << m_pMap << endl;
+  cout << m << endl;
 }
+Pig::~Pig(){}

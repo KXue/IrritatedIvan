@@ -16,19 +16,18 @@ public:
   virtual string Use(const Vec2i &, bool = true);
   virtual string Look(const Vec2i &, bool = false);
   virtual string RedoAction(bool = false);
-
+  virtual unsigned int Heal(const unsigned int &);
   //Since Character is meant to be a base class, this function should only be called by derived classes that are also players. Returns "you". Derived classes should return their class name (like "orc")
   virtual string GetName()const;
 
-  //Since Character is meant to be a base class, this function should only be called by derived classes that are also players. Returns '@' (player symbol). Derived classes should return their map symbol (like 'o' for orc)
+  //Since Character is meant to be a base class, this function should only be called by derived classes that are players. Returns '@' (player symbol). Derived classes should return their map symbol (like 'o' for orc)
   virtual MapType GetType()const;
   //Override in derived class to create unique behavior between races/classes.
-  virtual string GetAttacked(const int&, Character &);
+  virtual string TakeDamage(const int&);
   virtual string GetUsed(Character &);
-  virtual string GetDescription() const;
+  virtual string GetDescription();
 
 protected:
-  GameMap *m_pMap;
   // Don't think there's enough difference between playable and non playable characters to justify making another class. Input is already handled by InManager.
   bool m_IsPlayer;
   // Stats

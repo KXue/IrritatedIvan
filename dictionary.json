@@ -17,42 +17,42 @@
     "term" : "east",
     "type" : "direction",
     "alternatives" : ["e", "E", "East", "EAST"],
-    "vector" : [-1, 0],
+    "vector" : [1, 0],
     "description": "The East (left) direction"
   },
   {
     "term" : "west",
     "type" : "direction",
     "alternatives" : ["w", "W", "West", "WEST"],
-    "vector" : [1, 0],
+    "vector" : [-1, 0],
     "description": "The West (right) direction."
   },
   {
     "term" : "northeast",
     "type" : "direction",
     "alternatives" : ["ne", "NE", "NorthEast", "Northeast", "NORTHEAST"],
-    "vector" : [-1, -1],
+    "vector" : [1, -1],
     "description": "The NorthEast (up and left) direction. Moving this way still takes only 1 action."
   },
   {
     "term" : "southeast",
     "type" : "direction",
     "alternatives" : ["se", "SE", "SouthEast", "Southeast", "SOUTHEAST"],
-    "vector" : [-1, 1],
+    "vector" : [1, 1],
     "description": "The SouthEast (down and left) direction. Moving this way still takes only 1 action."
   },
   {
     "term" : "northwest",
     "type" : "direction",
     "alternatives" : ["nw", "NW", "NorthWest", "Northwest", "NORTHWEST"],
-    "vector" : [1, -1],
+    "vector" : [-1, -1],
     "description": "The NorthWest (up and right) direction. Moving this way still takes only 1 action."
   },
   {
     "term" : "southwest",
     "type" : "direction",
     "alternatives" : ["sw", "SW", "SouthWest", "Southwest", "SOUTHWEST"],
-    "vector" : [1, 1],
+    "vector" : [-1, 1],
     "description": "The SouthWest (down and right) direction. Moving this way still takes only 1 action."
   },
 

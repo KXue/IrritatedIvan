@@ -16,25 +16,19 @@ void Game::MainLoop(){
 
 }
 Game::Game() : m_IsPlaying(true){
-  cout << "Game" << endl;
   m_pInput = new InManager();
-  cout << "Quit" << endl;
   m_pGenerator = new RNG(*m_Spec.GetSeed());
 
-  for(int i = 0; i < 5; i++){
-    m_pMap.push_back(new GameMap(m_Spec, m_pGenerator));
-    cout << m_pMap[i]->ToString() << endl;
-  }
+  m_pMap.push_back(new GameMap(m_Spec, m_pGenerator));
 
   m_pMap[0]->ResetRaffle();
   Vec2i playerPosition = m_pMap[0]->RafflePull(1, 10, 5)[0];
-  cout << playerPosition.ToString();
   m_pPlayer = new Pig(playerPosition, m_pMap[0], true);
-  cout << "Player" << endl;
 
   if(!m_pMap[0]->TryAddEntity(m_pPlayer)){
     cout << "Something went wrong with adding character to map";
   }
+  cout << m_pMap[0];
 
   m_pInput->AddFunction("move", &Character::Move);
   m_pInput->AddFunction("attack", &Character::Attack);

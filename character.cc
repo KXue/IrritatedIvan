@@ -1,18 +1,18 @@
 #include "character.hpp"
 #include "gamemap.hpp"
 #include "useful.hpp"
-
+//#include <iostream>
 #include <sstream>
 Character::Character(const Vec2i &position, GameMap *map,
                      bool isPlayer,
                      const unsigned int &maxHealth,
                      const unsigned short &attack,
                      const unsigned short &defense,
-                     const unsigned char &maxActions) : Entity(position), m_pMap(map), m_IsPlayer(isPlayer), m_MaxHealth(maxHealth), m_Health(maxHealth), m_Attack(attack), m_Defense(defense), m_MaxActions(maxActions), m_Actions(maxActions), m_ExpPercent(0) {}
+                     const unsigned char &maxActions) : Entity(position, map), m_IsPlayer(isPlayer), m_MaxHealth(maxHealth), m_Health(maxHealth), m_Attack(attack), m_Defense(defense), m_MaxActions(maxActions), m_Actions(maxActions), m_ExpPercent(0) {}
 
-Character::~Character() { m_pMap = nullptr; }
+Character::~Character() {}
 string Character::AttackTarget(Entity &target){
-  return target.GetAttacked(m_Attack, *this);
+  return target.TakeDamage(m_Attack);
 }
 string Character::UseItem(Entity &target){
   return target.GetUsed(*this);
@@ -20,7 +20,6 @@ string Character::UseItem(Entity &target){
 string Character::Move(const Vec2i &direction, bool quiet) {
   Vec2i newPosition = m_Position + direction;
   stringstream ss;
-
   if (m_pMap->GetTileAt(newPosition) == MapType::floor) {
     string move = m_IsPlayer? "move" : "moves";
     ss << Capitalize(GetName()) << " " << move << " one step.";
@@ -118,7 +117,7 @@ string Character::GetName()const{
 MapType Character::GetType()const{
   return MapType::player;
 }
-string Character::GetAttacked(const int &attackStrength, Character &attacker){
+string Character::TakeDamage(const int &attackStrength){
   unsigned int damageTaken = (attackStrength * (float)(10 - m_Defense) * 0.1);
 
   stringstream ss;
@@ -140,10 +139,18 @@ string Character::GetUsed(Character &user){
   ss << GetName() << " looks at you confusingly like \"WTF are you doing?\" You just wasted an action.";
   return ss.str();
 }
-string Character::GetDescription() const{
+string Character::GetDescription(){
   return "This is some kind of character. Not sure what yet.";
 }
 void Character::SetLastAction(const function<string(Character&, const Vec2i&, bool)> &action, const Vec2i &direction){
   m_LastAction = action;
   m_LastDirection = direction;
+}
+unsigned int Character::Heal(const unsigned int &amount){
+  unsigned int retVal = m_MaxHealth - m_Health;
+  if(amount < retVal){
+    retVal = amount;
+  }
+  m_Health += retVal;
+  return retVal;
 }
