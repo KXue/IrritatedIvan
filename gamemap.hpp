@@ -46,6 +46,8 @@ public:
   bool TryAddEntity(Entity *entity);
   bool TryGetEntityAt(const Vec2i &point, Entity *result);
   bool RemoveEntityAt(const Vec2i &point);
+  bool TryAddPlayer(Character*);
+  Character * TryRemovePlayer();
   vector<vector<MapType>> GetNeighbours(const int &, const int &,
                                         const int & = 1) const;
   int CountWalls(const int &, const int &, const int & = 1, bool = false) const;

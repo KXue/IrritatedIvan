@@ -412,3 +412,20 @@ int GameMap::GetDistanceToPlayer(const Vec2i &position){
   position.GetCoords(c, r);
   return m_DistanceMap[r][c];
 }
+bool GameMap::TryAddPlayer(Character *player){
+  bool retVal = true;
+  if(m_pPlayer){
+    retVal = false;
+  }
+  else{
+    m_pPlayer = player;
+  }
+  return retVal;
+}
+Character * GameMap::TryRemovePlayer(){
+  Character *retVal = m_pPlayer;
+  if(retVal){
+    m_pPlayer = nullptr;
+  }
+  return retVal;
+}
