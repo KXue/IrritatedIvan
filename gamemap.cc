@@ -101,7 +101,7 @@ GameMap::GameMap(const MapSpec &spec, RNG *gen) : m_pPlayer(nullptr), m_MaxRaffl
   m_Width = spec.GetWidth();
   m_Height = spec.GetHeight();
   m_Map = vector<vector<MapType>>(m_Height, vector<MapType>(m_Width, MapType::wall));
-  m_DistanceMap = vector<vector<unsigned int>>(m_Height, vector<unsigned int>(m_Width, 0));
+  m_DistanceMap = vector<vector<int>>(m_Height, vector<int>(m_Width, -1));
   GenerateMap(spec);
 }
 GameMap::~GameMap() {
@@ -316,8 +316,6 @@ MapType GameMap::GetTileAt(const Vec2i &point) const {
   if (r < m_Height && c < m_Width && r >= 0 && c >= 0) {
     retVal = m_Map[r][c];
   }
-  cout << point.ToString() << endl;
-  cout << m_Entities.size() << endl;
   if(retVal == MapType::floor){
     for(int i = 0; i < m_Entities.size(); i++){
       if(m_Entities[i]->GetPosition() == point){
@@ -337,9 +335,6 @@ bool GameMap::TryGetEntityAt(const Vec2i &point, Entity *result){
   for(int i = 0; i < m_Entities.size(); i++){
     if(point == m_Entities[i]->GetPosition()){
       found = true;
-      // if(result){
-      //   delete result;
-      // }
       result = m_Entities[i];
       break;
     }
@@ -358,7 +353,7 @@ bool GameMap::RemoveEntityAt(const Vec2i &point){
   }
   return found;
 }
-vector<vector<unsigned int>> BreadthFirstGenerate(const vector<vector<MapType>> map, int x, int y){
+vector<vector<int>> BreadthFirstGenerate(const vector<vector<MapType>> map, int x, int y){
   int width = map[0].size();
   int height = map.size();
 
@@ -368,7 +363,7 @@ vector<vector<unsigned int>> BreadthFirstGenerate(const vector<vector<MapType>> 
   queueY.push(y);
   int qsize = queueX.size();
   vector<vector<bool>>traversed = vector<vector<bool>>(height, vector<bool>(width, false));
-  vector<vector<unsigned int>>distanceMap = vector<vector<unsigned int>>(height, vector<unsigned int>(width, 0));
+  vector<vector<int>>distanceMap = vector<vector<int>>(height, vector<int>(width, -1));
 
   int distance = 0;
   do{
@@ -377,6 +372,7 @@ vector<vector<unsigned int>> BreadthFirstGenerate(const vector<vector<MapType>> 
       int topY = queueY.front();
       queueX.pop();
       queueY.pop();
+      traversed[topY][topX] = true;
       distanceMap[topY][topX] = distance;
       for(int i = 0; i < 8; i++){
         int nextX = topX + GameMap::DIRECTIONS[i][0];
@@ -400,12 +396,20 @@ void GameMap::UpdateDistanceMap(){
     Vec2i playerPosition = m_pPlayer->GetPosition();
     m_DistanceMap = BreadthFirstGenerate(m_Map, playerPosition.GetX(), playerPosition.GetY());
   }
-  for(int i = 0; i < m_Height; i++){
-    for(int j = 0; j < m_Width; j++){
-      cout << m_DistanceMap[i][j];
-    }
-    cout << endl;
-  }
+  // for(int i = 0; i < m_Height; i++){
+  //   for(int j = 0; j < m_Width; j++){
+  //     if(m_DistanceMap[i][j] > 9){
+  //       cout << m_DistanceMap[i][j]%10;
+  //     }
+  //     else if(m_DistanceMap[i][j] < 0){
+  //       cout << '-';
+  //     }
+  //     else{
+  //       cout << m_DistanceMap[i][j];
+  //     }
+  //   }
+  //   cout << endl;
+  // }
 }
 int GameMap::GetDistanceToPlayer(const Vec2i &position){
   int r, c;

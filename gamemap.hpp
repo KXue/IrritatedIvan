@@ -20,7 +20,7 @@ class GameMap {
   vector<vector<MapType>> m_Map;
   vector<vector<unsigned int>> m_ProbabilityDistribution;
   vector<Entity*> m_Entities;
-  vector<vector<unsigned int>> m_DistanceMap;
+  vector<vector<int>> m_DistanceMap;
   Character* m_pPlayer;
   int m_Width;
   int m_Height;

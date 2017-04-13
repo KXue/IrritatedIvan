@@ -25,10 +25,9 @@ Game::Game() : m_IsPlaying(true){
   Vec2i playerPosition = m_pMap[0]->RafflePull(1, 10, 5)[0];
   m_pPlayer = new Pig(playerPosition, m_pMap[0], true);
 
-  if(!m_pMap[0]->TryAddEntity(m_pPlayer)){
+  if(!m_pMap[0]->TryAddPlayer(m_pPlayer)){
     cout << "Something went wrong with adding character to map";
   }
-  cout << m_pMap[0];
 
   m_pInput->AddFunction("move", &Character::Move);
   m_pInput->AddFunction("attack", &Character::Attack);
@@ -42,6 +41,7 @@ Game::Game() : m_IsPlaying(true){
 Game::~Game(){
   delete m_pInput;
   delete m_pGenerator;
+  delete m_pPlayer;
   for(int i = 0; i < m_pMap.size(); i++){
     delete m_pMap[i];
   }
@@ -53,6 +53,7 @@ void Game::Start(){
     cout << m_pMap[0]->ToString();
     if(getline(cin, input)){
       cout << m_pInput->ParseInput(input, *m_pPlayer, *this);
+      m_pMap[0]->UpdateDistanceMap();
     }
     else{
       m_IsPlaying = false;
