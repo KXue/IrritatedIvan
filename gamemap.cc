@@ -416,6 +416,31 @@ int GameMap::GetDistanceToPlayer(const Vec2i &position){
   position.GetCoords(c, r);
   return m_DistanceMap[r][c];
 }
+Vec2i GameMap::DirectionToPlayer(const Vec2i& currentPosition){
+  vector<Vec2i> bestDirections;
+  int bestDistance = GetDistanceToPlayer(currentPosition);
+  for(int i = 0; i < 8; i++){
+    Vec2i newDirection = Vec2i(DIRECTIONS[i][0], DIRECTIONS[i][1]);
+    Vec2i newPosition = newDirection + currentPosition;
+    if(GetTileAt(currentPosition + newDirection) == MapType::floor){
+      int newDistance = GetDistanceToPlayer(newPosition);
+      if(newDistance < bestDistance){
+        bestDirections.clear();
+        bestDirections.push_back(newDirection);
+        bestDistance = newDistance;
+      }
+      else if(newDistance == bestDistance){
+        bestDirections.push_back(newDirection);
+      }
+    }
+  }
+  if(bestDirections.size() == 0){
+    cout << "WTF???" << endl;
+    return Vec2i();
+  }
+  uniform_int_distribution<unsigned int> dist(0, bestDirections.size() - 1);
+  return bestDirections[dist(*m_pGenerator)];
+}
 bool GameMap::TryAddPlayer(Character *player){
   bool retVal = true;
   if(m_pPlayer){

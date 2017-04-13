@@ -55,5 +55,6 @@ public:
   vector<Vec2i> RafflePull(const int &, const int &, const int &);
   void UpdateDistanceMap();
   int GetDistanceToPlayer(const Vec2i &);
+  Vec2i DirectionToPlayer(const Vec2i &);
 };
 #endif
