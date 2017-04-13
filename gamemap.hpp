@@ -20,6 +20,7 @@ class GameMap {
   vector<vector<MapType>> m_Map;
   vector<vector<unsigned int>> m_ProbabilityDistribution;
   vector<Entity*> m_Entities;
+  vector<vector<unsigned int>> m_DistanceMap;
   Character* m_pPlayer;
   int m_Width;
   int m_Height;
@@ -50,5 +51,7 @@ public:
   int CountWalls(const int &, const int &, const int & = 1, bool = false) const;
   void ResetRaffle(const int & = 9);
   vector<Vec2i> RafflePull(const int &, const int &, const int &);
+  void UpdateDistanceMap();
+  int GetDistanceToPlayer(const Vec2i &);
 };
 #endif

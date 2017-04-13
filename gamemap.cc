@@ -8,9 +8,8 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
-
+#include <queue>
 //Helper functions for raffle draw system
-
 //prints the number of tickets each tile on the map has
 void printLot(const vector<vector<unsigned int>> &lot) {
   for (int row = 0; row < lot.size(); row++) {
@@ -71,14 +70,6 @@ Vec2i GetRafflePosition(const unsigned int &raffle, const vector<vector<unsigned
 
 int const GameMap::DIRECTIONS[8][2] = {{1, 0},  {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1},  {1, 1}};
 
-GameMap::GameMap(const MapSpec &spec, RNG *gen) : m_pPlayer(nullptr), m_MaxRaffle(9), m_pGenerator(gen) {
-  m_Width = spec.GetWidth();
-  m_Height = spec.GetHeight();
-  m_Map = vector<vector<MapType>>(m_Height, vector<MapType>(m_Width, MapType::wall));
-  GenerateMap(spec);
-}
-GameMap::~GameMap() {}
-
 void ReassignRaffle(const unsigned int &maxSquareRadius, const int &maxRaffle, const Vec2i &point, vector<vector<unsigned int>> &lot, const int &offset) {
   int r, c;
   int squareRadius;
@@ -106,6 +97,19 @@ void ReassignRaffle(const unsigned int &maxSquareRadius, const int &maxRaffle, c
     }
   }
 }
+GameMap::GameMap(const MapSpec &spec, RNG *gen) : m_pPlayer(nullptr), m_MaxRaffle(9), m_pGenerator(gen) {
+  m_Width = spec.GetWidth();
+  m_Height = spec.GetHeight();
+  m_Map = vector<vector<MapType>>(m_Height, vector<MapType>(m_Width, MapType::wall));
+  m_DistanceMap = vector<vector<unsigned int>>(m_Height, vector<unsigned int>(m_Width, 0));
+  GenerateMap(spec);
+}
+GameMap::~GameMap() {
+  for(int i = 0; i < m_Entities.size(); i++){
+    delete m_Entities[i];
+  }
+}
+
 void GameMap::GenerateMap(const MapSpec &spec) {
   do {
     GenerateFromSpec(spec);
@@ -212,7 +216,6 @@ unsigned short GameMap::TotalArea() const {
   }
   return area;
 }
-
 
 string GameMap::ToString() const {
   stringstream ss;
@@ -322,6 +325,9 @@ MapType GameMap::GetTileAt(const Vec2i &point) const {
         break;
       }
     }
+    if(m_pPlayer && m_pPlayer->GetPosition() == point){
+      retVal = m_pPlayer->GetType();
+    }
   }
   return retVal;
 }
@@ -351,4 +357,58 @@ bool GameMap::RemoveEntityAt(const Vec2i &point){
     }
   }
   return found;
+}
+vector<vector<unsigned int>> BreadthFirstGenerate(const vector<vector<MapType>> map, int x, int y){
+  int width = map[0].size();
+  int height = map.size();
+
+  queue<int> queueX;
+  queue<int> queueY;
+  queueX.push(x);
+  queueY.push(y);
+  int qsize = queueX.size();
+  vector<vector<bool>>traversed = vector<vector<bool>>(height, vector<bool>(width, false));
+  vector<vector<unsigned int>>distanceMap = vector<vector<unsigned int>>(height, vector<unsigned int>(width, 0));
+
+  int distance = 0;
+  do{
+    for(int j = 0; j < qsize; j++){
+      int topX = queueX.front();
+      int topY = queueY.front();
+      queueX.pop();
+      queueY.pop();
+      distanceMap[topY][topX] = distance;
+      for(int i = 0; i < 8; i++){
+        int nextX = topX + GameMap::DIRECTIONS[i][0];
+        int nextY = topY + GameMap::DIRECTIONS[i][1];
+        if(nextX >= 0 && nextY >= 0 && nextX < width && nextY < height && !traversed[nextY][nextX] && map[nextY][nextX] == MapType::floor){
+          traversed[nextY][nextX] = true;
+          queueX.push(nextX);
+          queueY.push(nextY);
+        }
+      }
+    }
+    distance++;
+    qsize = queueX.size();
+  }while(qsize != 0);
+
+  return distanceMap;
+}
+
+void GameMap::UpdateDistanceMap(){
+  if(m_pPlayer){
+    Vec2i playerPosition = m_pPlayer->GetPosition();
+    m_DistanceMap = BreadthFirstGenerate(m_Map, playerPosition.GetX(), playerPosition.GetY());
+  }
+  for(int i = 0; i < m_Height; i++){
+    for(int j = 0; j < m_Width; j++){
+      cout << m_DistanceMap[i][j];
+    }
+    cout << endl;
+  }
+}
+int GameMap::GetDistanceToPlayer(const Vec2i &position){
+  int r, c;
+  position.GetCoords(c, r);
+  return m_DistanceMap[r][c];
 }
