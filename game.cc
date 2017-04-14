@@ -3,6 +3,7 @@
 #include "gamemap.hpp"
 #include "character.hpp"
 #include "pig.hpp"
+#include "useful.hpp"
 #include <functional>
 #include <fstream>
 #include <iostream>
@@ -20,6 +21,12 @@ Game::Game() : m_IsPlaying(true){
   m_pGenerator = new RNG(*m_Spec.GetSeed());
 
   m_pMap.push_back(new GameMap(m_Spec, m_pGenerator));
+
+  int numPigs = 10;
+  int numHP = 5;
+  int numPP = 5;
+
+  vector<Vec2i> places = m_pMap[0]->RafflePull(numPigs + numHP + numPP, 10, 5);
 
   m_pMap[0]->ResetRaffle();
   Vec2i playerPosition = m_pMap[0]->RafflePull(1, 10, 5)[0];

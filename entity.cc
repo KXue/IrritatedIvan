@@ -8,3 +8,6 @@ Entity::~Entity(){
 string Entity::Decide(){
   return "";
 }
+void Entity::SetPosition(const Vec2i &position){
+  m_Position = position;
+}

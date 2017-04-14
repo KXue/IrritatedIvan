@@ -1,6 +1,7 @@
 #include "character.hpp"
 #include "gamemap.hpp"
 #include "useful.hpp"
+#include "decider.hpp"
 //#include <iostream>
 #include <sstream>
 Character::Character(const Vec2i &position, GameMap *map,
@@ -8,9 +9,11 @@ Character::Character(const Vec2i &position, GameMap *map,
                      const unsigned int &maxHealth,
                      const unsigned short &attack,
                      const unsigned short &defense,
-                     const unsigned char &maxActions) : Entity(position, map), m_IsPlayer(isPlayer), m_MaxHealth(maxHealth), m_Health(maxHealth), m_Attack(attack), m_Defense(defense), m_MaxActions(maxActions), m_Actions(maxActions), m_ExpPercent(0) {}
+                     const unsigned char &maxActions) : Entity(position, map), m_IsPlayer(isPlayer), m_pDecider(new Decider()), m_MaxHealth(maxHealth), m_Health(maxHealth), m_Attack(attack), m_Defense(defense), m_MaxActions(maxActions), m_Actions(maxActions), m_ExpPercent(0) {}
 
-Character::~Character() {}
+Character::~Character() {
+  delete m_pDecider;
+}
 string Character::AttackTarget(Entity &target){
   return target.TakeDamage(m_Attack);
 }
@@ -93,6 +96,7 @@ string Character::Look(const Vec2i & direction, bool quiet){
     ss << Capitalize(GetName()) << " " << lookString << " at " << target->GetName() << ".";
     ss << target->GetDescription();
     SetLastAction(&Character::Look, direction);
+    m_Actions--;
   }
   else{
     ss << "There's nothing there.";
@@ -153,4 +157,13 @@ unsigned int Character::Heal(const unsigned int &amount){
   }
   m_Health += retVal;
   return retVal;
+}
+void Character::ResetActions(){
+  m_Actions = m_MaxActions;
+}
+int Character::GetActions()const{
+  return m_Actions;
+}
+string Character::Decide(){
+  return m_pDecider->Decide(*this, *m_pMap, 3);
 }

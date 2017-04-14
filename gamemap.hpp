@@ -3,6 +3,7 @@
 
 #include "maptype.hpp"
 #include "shared.hpp"
+#include "vec2i.hpp"
 #include <random>
 #include <string>
 #include <unordered_set>
@@ -10,7 +11,6 @@
 
 using namespace std;
 
-class Vec2i;
 class Character;
 class Entity;
 class MapSpec;
@@ -26,7 +26,8 @@ class GameMap {
   int m_Height;
   unsigned int m_MaxRaffle;
   RNG* m_pGenerator;
-
+  Vec2i m_StartLocation;
+  Vec2i m_EndLocation;
   // member functions
   void GenerateMap(const MapSpec &);
   void GenerateFromSpec(const MapSpec &n);
@@ -41,6 +42,7 @@ public:
   GameMap(const MapSpec &, RNG *gen);
   ~GameMap();
   string ToString() const;
+  string Update();
   int GetLineCoord(const Vec2i &) const;
   MapType GetTileAt(const Vec2i &) const;
   bool TryAddEntity(Entity *entity);
@@ -53,8 +55,13 @@ public:
   int CountWalls(const int &, const int &, const int & = 1, bool = false) const;
   void ResetRaffle(const int & = 9);
   vector<Vec2i> RafflePull(const int &, const int &, const int &);
+  Vec2i GetStartLocation()const;
+  Vec2i GetEndLocation()const;
+  void SetStartLocation(const Vec2i&);
+  void SetEndLocation(const Vec2i&);
   void UpdateDistanceMap();
   int GetDistanceToPlayer(const Vec2i &);
   Vec2i DirectionToPlayer(const Vec2i &);
+  Vec2i RandomValidDirection(const Vec2i &);
 };
 #endif

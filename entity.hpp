@@ -16,6 +16,7 @@ public:
   Entity(const Vec2i&, GameMap* map);
   virtual ~Entity() = 0;
   Vec2i GetPosition() const;
+  void SetPosition(const Vec2i&);
 
   virtual string Decide();
   virtual string GetName()const = 0 ;

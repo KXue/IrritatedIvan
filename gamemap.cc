@@ -231,6 +231,7 @@ string GameMap::ToString() const {
   if(m_pPlayer){
     map[GetLineCoord(m_pPlayer->GetPosition())] = (char)m_pPlayer->GetType();
   }
+  map[GetLineCoord(m_EndLocation)] = (char)MapType::downstair;
   for(int i = m_Width * m_Height; i > 0; i -= m_Width){
     map.insert(i, 1, '\n');
   }
@@ -422,7 +423,7 @@ Vec2i GameMap::DirectionToPlayer(const Vec2i& currentPosition){
   for(int i = 0; i < 8; i++){
     Vec2i newDirection = Vec2i(DIRECTIONS[i][0], DIRECTIONS[i][1]);
     Vec2i newPosition = newDirection + currentPosition;
-    if(GetTileAt(currentPosition + newDirection) == MapType::floor){
+    if(GetTileAt(newPosition) == MapType::floor){
       int newDistance = GetDistanceToPlayer(newPosition);
       if(newDistance < bestDistance){
         bestDirections.clear();
@@ -441,6 +442,19 @@ Vec2i GameMap::DirectionToPlayer(const Vec2i& currentPosition){
   uniform_int_distribution<unsigned int> dist(0, bestDirections.size() - 1);
   return bestDirections[dist(*m_pGenerator)];
 }
+Vec2i GameMap::RandomValidDirection(const Vec2i &currentPosition){
+  vector<Vec2i> validDirections;
+  for(int i = 0; i < 8; i++){
+    Vec2i newDirection = Vec2i(DIRECTIONS[i][0], DIRECTIONS[i][1]);
+    Vec2i newPosition = newDirection + currentPosition;
+    if(GetTileAt(newPosition) == MapType::floor){
+      validDirections.push_back(newDirection);
+    }
+  }
+
+  uniform_int_distribution<unsigned int> dist(0, validDirections.size() - 1);
+  return validDirections[dist(*m_pGenerator)];
+}
 bool GameMap::TryAddPlayer(Character *player){
   bool retVal = true;
   if(m_pPlayer){
@@ -455,6 +469,26 @@ Character * GameMap::TryRemovePlayer(){
   Character *retVal = m_pPlayer;
   if(retVal){
     m_pPlayer = nullptr;
+  }
+  return retVal;
+}
+//Getting ugly
+Vec2i GameMap::GetStartLocation()const{
+  return m_StartLocation;
+}
+Vec2i GameMap::GetEndLocation()const{
+  return m_EndLocation;
+}
+void GameMap::SetStartLocation(const Vec2i &loc){
+  m_StartLocation = loc;
+}
+void GameMap::SetEndLocation(const Vec2i &loc){
+  m_EndLocation = loc;
+}
+string GameMap::Update(){
+  string retVal;
+  for(auto &element : m_Entities){
+    retVal += element->Decide();
   }
   return retVal;
 }

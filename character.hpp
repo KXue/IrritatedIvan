@@ -4,6 +4,7 @@
 #include "functional"
 
 class GameMap;
+class Decider;
 
 class Character : public Entity {
 public:
@@ -26,10 +27,13 @@ public:
   virtual string TakeDamage(const int&);
   virtual string GetUsed(Character &);
   virtual string GetDescription();
-
+  virtual string Decide();
+  virtual void ResetActions();
+  virtual int GetActions()const;
 protected:
   // Don't think there's enough difference between playable and non playable characters to justify making another class. Input is already handled by InManager.
   bool m_IsPlayer;
+  Decider * m_pDecider;
   // Stats
   unsigned int m_MaxHealth;
   unsigned int m_Health;
