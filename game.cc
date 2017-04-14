@@ -4,6 +4,8 @@
 #include "character.hpp"
 #include "pig.hpp"
 #include "useful.hpp"
+#include "healthpotion.hpp"
+#include "poisonpotion.hpp"
 #include <functional>
 #include <fstream>
 #include <iostream>
@@ -17,6 +19,7 @@ void Game::MainLoop(){
 
 }
 Game::Game() : m_IsPlaying(true){
+  cout << "GAME";
   m_pInput = new InManager();
   m_pGenerator = new RNG(*m_Spec.GetSeed());
 
@@ -25,15 +28,28 @@ Game::Game() : m_IsPlaying(true){
   int numPigs = 10;
   int numHP = 5;
   int numPP = 5;
-
-  vector<Vec2i> places = m_pMap[0]->RafflePull(numPigs + numHP + numPP, 10, 5);
-
+  cout << "RESET";
   m_pMap[0]->ResetRaffle();
-  Vec2i playerPosition = m_pMap[0]->RafflePull(1, 10, 5)[0];
-  m_pPlayer = new Pig(playerPosition, m_pMap[0], true);
+  cout << "PULL";
+  vector<Vec2i> places = m_pMap[0]->RafflePull(numPigs + numHP + numPP + 2, 10, 5);
+  Vec2i first, second;
+  cout << "POP";
+  PopFurthestPoints(places, first, second);
+  m_pMap[0]->SetStartLocation(first);
+  m_pMap[0]->SetEndLocation(second);
+  m_pPlayer = new Pig(first, m_pMap[0], true);
 
   if(!m_pMap[0]->TryAddPlayer(m_pPlayer)){
     cout << "Something went wrong with adding character to map";
+  }
+
+  for(int i = 0; i < numPigs; i++){
+    m_pMap[0]->TryAddEntity(new Pig(*places.begin(), m_pMap[0], false));
+    places.erase(places.begin());
+  }
+  for(int i = 0; i < numHP; i++){
+    m_pMap[0]->TryAddEntity(new HealthPotion(3, *places.begin(), m_pMap[0]));
+    places.erase(places.begin());
   }
 
   m_pInput->AddFunction("move", &Character::Move);
@@ -57,14 +73,18 @@ void Game::Start(){
   m_IsPlaying = true;
   string input;
   while(m_IsPlaying){
-    cout << m_pMap[0]->ToString();
-    if(getline(cin, input)){
-      cout << m_pInput->ParseInput(input, *m_pPlayer, *this);
-      m_pMap[0]->UpdateDistanceMap();
+    while(m_IsPlaying && m_pPlayer->GetActions() > 0){
+      cout << m_pMap[0]->ToString();
+      if(getline(cin, input)){
+        cout << m_pInput->ParseInput(input, *m_pPlayer, *this);
+        m_pMap[0]->UpdateDistanceMap();
+      }
+      else{
+        m_IsPlaying = false;
+      }
     }
-    else{
-      m_IsPlaying = false;
-    }
+    m_pPlayer->ResetActions();
+    cout << m_pMap[0]->Update();
   }
 }
 void Game::QuitMacro(){

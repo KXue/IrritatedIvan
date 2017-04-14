@@ -31,10 +31,29 @@ std::string Capitalize(std::string base){
 std::string Verbalize(std::string base, char perspective){
   std::string isExceptionArray[3] = {"am", "are", "is"};
   if(base == "is" || base == "are" || base == "am"){
-    base =isExceptionArray[(int)perspective];
+    base = isExceptionArray[(int)perspective];
   }
   else if(perspective > 2){
     base += 's';
   }
   return base;
+}
+
+void PopFurthestPoints(std::vector<Vec2i> &points, Vec2i &first, Vec2i &second){
+  unsigned int maxSquareDistance = 0;
+  vector<Vec2i>::iterator firstIt, secondIt;
+  for(auto it = points.begin(); it != points.end(); ++it){
+    for(auto jt = points.begin(); jt != points.end(); ++jt){
+      unsigned int squareDistance = Vec2i::GetIntSquareDistance(*it, *jt);
+      if(squareDistance > maxSquareDistance){
+        maxSquareDistance = squareDistance;
+        firstIt = it;
+        secondIt = jt;
+      }
+    }
+  }
+  first = Vec2i(*firstIt);
+  second = Vec2i(*secondIt);
+  points.erase(secondIt);
+  points.erase(firstIt);
 }

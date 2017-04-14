@@ -1,4 +1,4 @@
-OBJS = main.o game.o vec2i.o gamemap.o inmanager.o mapspec.o entity.o character.o pig.o useful.o decider.o
+OBJS = main.o game.o vec2i.o gamemap.o inmanager.o mapspec.o entity.o character.o pig.o useful.o decider.o healthpotion.o poisonpotion.o item.o
 CC = g++
 SDL = -lSDL2 -lSDL2_ttf -lSDL2_image
 CFLAGS = -Wall -c -std=c++11 $(DEBUG)
@@ -32,7 +32,12 @@ useful.o: useful.cc
 	$(CC) $(CFLAGS) $< -o $@
 decider.o: decider.cc
 	$(CC) $(CFLAGS) $< -o $@
+item.o: item.cc
+	$(CC) $(CFLAGS) $< -o $@
+healthpotion.o: healthpotion.cc
+	$(CC) $(CFLAGS) $< -o $@
+poisonpotion.o: poisonpotion.cc
+	$(CC) $(CFLAGS) $< -o $@
 
-	
 clean:
 	rm *.o && rm $(EXE)

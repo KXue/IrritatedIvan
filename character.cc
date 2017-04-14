@@ -2,7 +2,7 @@
 #include "gamemap.hpp"
 #include "useful.hpp"
 #include "decider.hpp"
-//#include <iostream>
+#include <iostream>
 #include <sstream>
 Character::Character(const Vec2i &position, GameMap *map,
                      bool isPlayer,
@@ -28,7 +28,8 @@ string Character::Move(const Vec2i &direction, bool quiet) {
     ss << Capitalize(GetName()) << " " << move << " one step.";
     m_Position = newPosition;
     SetLastAction(&Character::Move, direction);
-    m_Actions--;
+    m_Actions-=1;
+    cout << "ACTIONS: " << (int)m_Actions << endl;
   }else{
     ss << "Something is in the way!";
   }

@@ -3,7 +3,7 @@
 #include <string>
 class Character;
 class GameMap;
-//TODO: Follow player when close enough. Attack when close enough
+//TODO: Follow player when close enough. Attack when closer enough
 class Decider{
 public:
   Decider();

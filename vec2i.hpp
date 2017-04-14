@@ -18,10 +18,9 @@ public:
   int GetX() const;
   int GetY() const;
   void GetCoords(int &, int &) const;
-  friend Vec2i operator+(const Vec2i &, const Vec2i &);
-  friend Vec2i operator-(const Vec2i &, const Vec2i &);
+  Vec2i operator+(const Vec2i &)const;
+  Vec2i operator-(const Vec2i &)const;
   static int GetIntDistance(const Vec2i &, const Vec2i &);
-  Vec2i LineSegmentIntersectsHorizontal(const Vec2i &, const Vec2i &, int y);
+  static int GetIntSquareDistance(const Vec2i &, const Vec2i &);
 };
-
 #endif
