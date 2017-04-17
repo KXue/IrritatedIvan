@@ -27,6 +27,6 @@ string PoisonPotion::GetDescription(){
 }
 string PoisonPotion::GetUsed(Character &user){
   string retVal = user.TakeDamage(m_DamageAmount);
-  m_pMap->RemoveEntityAt(GetPosition());
+  m_pMap->TryRemoveEntityAt(GetPosition());
   return retVal;
 }

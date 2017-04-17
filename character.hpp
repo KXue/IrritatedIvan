@@ -17,7 +17,7 @@ public:
   virtual string Use(const Vec2i &, bool = true);
   virtual string Look(const Vec2i &, bool = false);
   virtual string RedoAction(bool = false);
-  virtual unsigned int Heal(const unsigned int &);
+  virtual string Heal(const unsigned int &);
   //Since Character is meant to be a base class, this function should only be called by derived classes that are also players. Returns "you". Derived classes should return their class name (like "orc")
   virtual string GetName()const;
 
@@ -30,6 +30,7 @@ public:
   virtual string Decide();
   virtual void ResetActions();
   virtual int GetActions()const;
+  bool IsDead()const;
 protected:
   // Don't think there's enough difference between playable and non playable characters to justify making another class. Input is already handled by InManager.
   bool m_IsPlayer;
@@ -39,8 +40,8 @@ protected:
   unsigned int m_Health;
   unsigned short m_Attack;
   unsigned short m_Defense;
-  unsigned char m_MaxActions;
-  unsigned char m_Actions;
+  unsigned short m_MaxActions;
+  unsigned short m_Actions;
   unsigned char m_ExpPercent;
 
   string m_Name;

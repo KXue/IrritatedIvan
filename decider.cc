@@ -1,7 +1,7 @@
 #include "decider.hpp"
 #include "character.hpp"
 #include "gamemap.hpp"
-
+#include <iostream>
 Decider::Decider(){}
 
 Decider::~Decider(){}

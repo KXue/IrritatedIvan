@@ -331,7 +331,7 @@ MapType GameMap::GetTileAt(const Vec2i &point) const {
   return retVal;
 }
 //Gets the entity at a point if it exists, returns false if not found.
-bool GameMap::TryGetEntityAt(const Vec2i &point, Entity *result){
+bool GameMap::TryGetEntityAt(const Vec2i &point, Entity *&result){
   bool found = false;
   for(int i = 0; i < m_Entities.size(); i++){
     if(point == m_Entities[i]->GetPosition()){
@@ -340,9 +340,13 @@ bool GameMap::TryGetEntityAt(const Vec2i &point, Entity *result){
       break;
     }
   }
+  if(!found && m_pPlayer->GetPosition() == point){
+    found = true;
+    result = m_pPlayer;
+  }
   return found;
 }
-bool GameMap::RemoveEntityAt(const Vec2i &point){
+bool GameMap::TryRemoveEntityAt(const Vec2i &point){
   bool found = false;
   for(auto it = m_Entities.begin(); it != m_Entities.end(); ++it){
     if(point == (*it)->GetPosition()){
@@ -423,7 +427,7 @@ Vec2i GameMap::DirectionToPlayer(const Vec2i& currentPosition){
   for(int i = 0; i < 8; i++){
     Vec2i newDirection = Vec2i(DIRECTIONS[i][0], DIRECTIONS[i][1]);
     Vec2i newPosition = newDirection + currentPosition;
-    if(GetTileAt(newPosition) == MapType::floor){
+    if(GetTileAt(newPosition) == MapType::floor || GetTileAt(newPosition) == MapType::player){
       int newDistance = GetDistanceToPlayer(newPosition);
       if(newDistance < bestDistance){
         bestDirections.clear();
@@ -438,6 +442,8 @@ Vec2i GameMap::DirectionToPlayer(const Vec2i& currentPosition){
   if(bestDirections.size() == 0){
     cout << "WTF???" << endl;
     return Vec2i();
+  }else if(bestDirections.size() == 1){
+    cout << "One: " << bestDirections[0].ToString() << endl;
   }
   uniform_int_distribution<unsigned int> dist(0, bestDirections.size() - 1);
   return bestDirections[dist(*m_pGenerator)];

@@ -26,9 +26,7 @@ string HealthPotion::GetDescription(){
   return "It's a health potion.";
 }
 string HealthPotion::GetUsed(Character &user){
-  unsigned int healAmount = user.Heal(m_HealAmount);
-  stringstream ss;
-  ss << Capitalize(user.GetName()) << " heals for " << healAmount << " health!" << endl;
-  m_pMap->RemoveEntityAt(GetPosition());
-  return ss.str();
+  string retVal = user.Heal(m_HealAmount);
+  m_pMap->TryRemoveEntityAt(GetPosition());
+  return retVal;
 }

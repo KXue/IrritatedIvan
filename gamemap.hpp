@@ -46,8 +46,8 @@ public:
   int GetLineCoord(const Vec2i &) const;
   MapType GetTileAt(const Vec2i &) const;
   bool TryAddEntity(Entity *entity);
-  bool TryGetEntityAt(const Vec2i &point, Entity *result);
-  bool RemoveEntityAt(const Vec2i &point);
+  bool TryGetEntityAt(const Vec2i &point, Entity *&result);
+  bool TryRemoveEntityAt(const Vec2i &point);
   bool TryAddPlayer(Character*);
   Character * TryRemovePlayer();
   vector<vector<MapType>> GetNeighbours(const int &, const int &,

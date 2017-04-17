@@ -82,9 +82,15 @@ void Game::Start(){
       else{
         m_IsPlaying = false;
       }
+      if(m_pPlayer->IsDead()){
+        m_IsPlaying = false;
+      }
     }
     m_pPlayer->ResetActions();
     cout << m_pMap[0]->Update();
+    if(m_pPlayer->IsDead()){
+      m_IsPlaying = false;
+    }
   }
 }
 void Game::QuitMacro(){

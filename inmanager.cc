@@ -41,7 +41,7 @@ string InManager::ParseInput(const string &input, Character &character, Game &ga
   string substring;
   string term;
   InputType type;
-  function<string(Character&, const Vec2i&, bool)> action;
+  function<string(Character&, const Vec2i&, bool)> action = nullptr;
   bool valid = true;
 
   stringstream outss;
@@ -79,15 +79,15 @@ string InManager::ParseInput(const string &input, Character &character, Game &ga
     valid = false;
   }
 
-  if(valid && type == InputType::direction){
+  if(valid && type == InputType::direction && action != nullptr){
     outss << action(character, m_DirectionMap[term], false);
   }
-
-
-  if(valid){
-    m_LastAction = input;
+  else if(valid && action == nullptr){
+    outss << "Action not defined" << endl;
   }
-
+  else if(valid){
+    outss << "\""<< term << "\" is not a direction" << endl;
+  }
   return outss.str();
 }
 
