@@ -19,7 +19,6 @@ void Game::MainLoop(){
 
 }
 Game::Game() : m_IsPlaying(true){
-  cout << "GAME";
   m_pInput = new InManager();
   m_pGenerator = new RNG(*m_Spec.GetSeed());
 
@@ -28,12 +27,9 @@ Game::Game() : m_IsPlaying(true){
   int numPigs = 10;
   int numHP = 5;
   int numPP = 5;
-  cout << "RESET";
   m_pMap[0]->ResetRaffle();
-  cout << "PULL";
   vector<Vec2i> places = m_pMap[0]->RafflePull(numPigs + numHP + numPP + 2, 10, 5);
   Vec2i first, second;
-  cout << "POP";
   PopFurthestPoints(places, first, second);
   m_pMap[0]->SetStartLocation(first);
   m_pMap[0]->SetEndLocation(second);
