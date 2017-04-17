@@ -442,8 +442,6 @@ Vec2i GameMap::DirectionToPlayer(const Vec2i& currentPosition){
   if(bestDirections.size() == 0){
     cout << "WTF???" << endl;
     return Vec2i();
-  }else if(bestDirections.size() == 1){
-    cout << "One: " << bestDirections[0].ToString() << endl;
   }
   uniform_int_distribution<unsigned int> dist(0, bestDirections.size() - 1);
   return bestDirections[dist(*m_pGenerator)];

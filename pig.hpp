@@ -8,6 +8,7 @@ public:
   ~Pig();
   string GetName()const;
   MapType GetType()const;
+  string GetDescription();
 };
 
 #endif

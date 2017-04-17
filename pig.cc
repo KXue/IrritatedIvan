@@ -14,3 +14,6 @@ MapType Pig::GetType()const{
   }
   return MapType::pig;
 }
+string Pig::GetDescription(){
+  return "This is a hostile pig. You're not sure what you did to make it hostile but it's hostile. ";
+}

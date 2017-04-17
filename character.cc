@@ -15,7 +15,6 @@ Character::~Character() {
   delete m_pDecider;
 }
 string Character::AttackTarget(Entity &target){
-  cout << "Attacking Target" << endl;
   return target.TakeDamage(m_Attack);
 }
 string Character::UseItem(Entity &target){
@@ -128,26 +127,28 @@ MapType Character::GetType()const{
 }
 string Character::TakeDamage(const int &attackStrength){
   unsigned int damageTaken = (attackStrength * (float)(10 - m_Defense) * 0.1);
+
+  stringstream ss;
+  string takeString = m_IsPlayer? "take" : "takes";
+  ss << Capitalize(GetName()) << " " << takeString << " " << damageTaken << " damage! ";
+
   if(damageTaken >= m_Health){
     damageTaken = m_Health;
   }
-  stringstream ss;
-  string takeString = m_IsPlayer? "take" : "takes";
-  ss << GetName() << " " << takeString << " " << damageTaken << "damage! ";
   m_Health -= damageTaken;
 
   if(m_Health <= 0){
-    ss << GetName() << " died!";
+    ss << Capitalize(GetName()) << " died! ";
     m_pMap->TryRemoveEntityAt(GetPosition());
   }else if(m_Health < (float)m_MaxHealth * 0.25){
     string lookString = m_IsPlayer? "look" : "looks";
-    ss << GetName() << " " << lookString << " to be in rough shape!";
+    ss << Capitalize(GetName()) << " " << lookString << " to be in rough shape! ";
   }
   return ss.str();
 }
 string Character::GetUsed(Character &user){
   stringstream ss;
-  ss << GetName() << " looks at you confusingly like \"WTF are you doing?\" You just wasted an action.";
+  ss << Capitalize(GetName()) << " looks at you confusingly like \"WTF are you doing?\" You just wasted an action.";
   return ss.str();
 }
 string Character::GetDescription(){
@@ -166,7 +167,7 @@ string Character::Heal(const unsigned int &amount){
   stringstream ss;
   ss << Capitalize(GetName()) << " ";
   string healString = m_IsPlayer ? "heal" : "heals";
-  ss << healString << " for " << retVal << " HP." << endl;
+  ss << healString << " for " << retVal << " HP. " << endl;
   return ss.str();
 }
 void Character::ResetActions(){
