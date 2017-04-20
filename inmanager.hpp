@@ -2,15 +2,15 @@
 #define INMANAGER_H
 
 #include "inputtype.hpp"
-
+#include "vec2i.hpp"
 #include <iostream>
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <functional>
 
 class Game;
 class Character;
-class Vec2i;
 
 using namespace std;
 
@@ -23,7 +23,6 @@ class InManager{
   unordered_map<string, string> m_DescriptionMap;
   vector<string> m_ValidTerms; // only for ToString :(
   string m_LastAction;
-  function<void(Game&)>m_QuitFunction;
   bool InputValidity(const string &, string &, InputType &);
 
 

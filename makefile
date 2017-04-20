@@ -1,5 +1,5 @@
 OBJS = main.o game.o vec2i.o gamemap.o inmanager.o mapspec.o entity.o character.o pig.o useful.o decider.o healthpotion.o poisonpotion.o item.o
-CC = g++
+CC = clang++
 SDL = -lSDL2 -lSDL2_ttf -lSDL2_image
 CFLAGS = -Wall -c -std=c++11 $(DEBUG)
 LFLAGS = -Wall -std=c++11 $(DEBUG)
