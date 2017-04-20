@@ -427,7 +427,7 @@ Vec2i GameMap::DirectionToPlayer(const Vec2i& currentPosition){
   for(int i = 0; i < 8; i++){
     Vec2i newDirection = Vec2i(DIRECTIONS[i][0], DIRECTIONS[i][1]);
     Vec2i newPosition = newDirection + currentPosition;
-    if(GetTileAt(newPosition) == MapType::floor || GetTileAt(newPosition) == MapType::player){
+    if((GetTileAt(newPosition) == MapType::floor || GetTileAt(newPosition) == MapType::player)  && !(newPosition == m_EndLocation) ){
       int newDistance = GetDistanceToPlayer(newPosition);
       if(newDistance < bestDistance){
         bestDirections.clear();
@@ -451,7 +451,7 @@ Vec2i GameMap::RandomValidDirection(const Vec2i &currentPosition){
   for(int i = 0; i < 8; i++){
     Vec2i newDirection = Vec2i(DIRECTIONS[i][0], DIRECTIONS[i][1]);
     Vec2i newPosition = newDirection + currentPosition;
-    if(GetTileAt(newPosition) == MapType::floor){
+    if(GetTileAt(newPosition) == MapType::floor && !(newPosition == m_EndLocation)){
       validDirections.push_back(newDirection);
     }
   }
@@ -466,6 +466,8 @@ bool GameMap::TryAddPlayer(Character *player){
   }
   else{
     m_pPlayer = player;
+    player->Reposition(m_StartLocation);
+    player->ChangeMap(this);
   }
   return retVal;
 }

@@ -1,7 +1,6 @@
 {
   "width" : 80,
   "height" : 20,
-  "seed" : [0, -1, 1, 2],
   "wallpercent" : 42,
   "steps" : 2,
   "steplist" : [

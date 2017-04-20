@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iterator>
 #include <sstream>
+#include <ctime>
 
 using namespace std;
 using json = nlohmann::json;
@@ -28,7 +29,7 @@ MapSpec::MapSpec(const string &fileLocation) : m_Width(80), m_Height(200) {
     }
     m_pSeed = new seed_seq(a, a + j["seed"].size());
   } else {
-    m_pSeed = new seed_seq();
+    m_pSeed = new seed_seq({time(0)});
   }
 
   m_WallProbability = j["wallpercent"].get<unsigned short>();

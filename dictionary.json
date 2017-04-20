@@ -66,7 +66,7 @@
     "term" : "look",
     "type" : "verb",
     "alternatives" : ["l", "L","Look", "LOOK"],
-    "description" : "The look action. Looks at anything 1 unit away. Uses 0 actions. Must be followed up with a direction."
+    "description" : "The look action. Looks at anything 1 unit away. Uses 1 action if there's something to be looked at. Must be followed up with a direction."
   },
   {
     "term" : "attack",

@@ -48,6 +48,9 @@ string InManager::ParseInput(const string &input, Character &character, Game &ga
 
   if(ss >> substring){
     valid = InputValidity(substring, term, type);
+    if(!valid){
+      outss << "Invalid input: " << input << " isn't a recognized term!" << endl;
+    }
   }
   else{
     outss << "No input found";
@@ -73,6 +76,9 @@ string InManager::ParseInput(const string &input, Character &character, Game &ga
 
   if(valid && ss >> substring){
     valid = InputValidity(substring, term, type);
+    if(!valid){
+      outss << "Invalid input: " << input << " isn't a recognized term!" << endl;
+    }
   }
   else if(valid){
     outss << "Action requires direction: " << substring << endl;
@@ -105,7 +111,6 @@ bool InManager::InputValidity(const string &input, string &term, InputType &type
     type = m_TypeMap[term];
   }
   else{
-    cout << "Invalid input: " << input << " isn't a recognized term!" << endl;
     valid = false;
   }
 

@@ -8,7 +8,7 @@ PoisonPotion::PoisonPotion(const unsigned int &damage, const Vec2i &position, Ga
 PoisonPotion::~PoisonPotion(){}
 
 string PoisonPotion::GetName()const{
-  string retVal = "poison potion";
+  string retVal = "spoiled jerky";
   if(!m_LookedAt){
     retVal = Item::GetName();
   }
@@ -23,7 +23,7 @@ MapType PoisonPotion::GetType()const{
 }
 string PoisonPotion::GetDescription(){
   m_LookedAt = true;
-  return "It's a poison potion.";
+  return "It's jerky gone bad.";
 }
 string PoisonPotion::GetUsed(Character &user){
   string retVal = user.TakeDamage(m_DamageAmount);

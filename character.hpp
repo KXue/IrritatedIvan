@@ -28,6 +28,9 @@ public:
   virtual string GetUsed(Character &);
   virtual string GetDescription();
   virtual string Decide();
+  virtual string ToString()const;
+  virtual void ChangeMap(GameMap*);
+  virtual void Reposition(const Vec2i&);
   virtual void ResetActions();
   virtual int GetActions()const;
   bool IsDead()const;

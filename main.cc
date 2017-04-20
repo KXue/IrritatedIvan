@@ -10,7 +10,7 @@ void quit(){
   isQuit = true;
 }
 int main(int argc, char const *argv[]) {
-  Game game;
+  Game game(3);
   game.Start();
   return 0;
 }

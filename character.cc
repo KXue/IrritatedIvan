@@ -12,7 +12,10 @@ Character::Character(const Vec2i &position, GameMap *map,
                      const unsigned char &maxActions) : Entity(position, map), m_IsPlayer(isPlayer), m_pDecider(new Decider()), m_MaxHealth(maxHealth), m_Health(maxHealth), m_Attack(attack), m_Defense(defense), m_MaxActions(maxActions), m_Actions(maxActions), m_ExpPercent(0) {}
 
 Character::~Character() {
-  delete m_pDecider;
+  if(m_pDecider){
+    delete m_pDecider;
+    m_pDecider = nullptr;
+  }
 }
 string Character::AttackTarget(Entity &target){
   return target.TakeDamage(m_Attack);
@@ -72,7 +75,6 @@ string Character::Use(const Vec2i &direction, bool quiet) {
     ss << UseItem(*target);
     SetLastAction(&Character::Use, direction);
     --m_Actions;
-    ss << m_Health << endl;
   }
   else{
     string decideString = m_IsPlayer? "decide" : "decides";
@@ -116,11 +118,7 @@ string Character::RedoAction(bool quiet){
 }
 
 string Character::GetName()const{
-  if(m_IsPlayer){
-    return "you";
-  }else{
-    return "char";
-  }
+  return "you";
 }
 MapType Character::GetType()const{
   return MapType::player;
@@ -181,4 +179,16 @@ string Character::Decide(){
 }
 bool Character::IsDead()const{
   return m_Health == 0;
+}
+string Character::ToString()const{
+  stringstream ss;
+  ss << Capitalize(GetName()) << " Health: " << m_Health << "/" << m_MaxHealth << " Attack: " << m_Attack << " Defense: " << m_Defense << endl;
+  ss << "Actions: " << m_Actions << "/" << m_MaxActions << endl;
+  return ss.str();
+}
+void Character::ChangeMap(GameMap* map){
+  m_pMap = map;
+}
+void Character::Reposition(const Vec2i &newPosition){
+  m_Position = newPosition;
 }

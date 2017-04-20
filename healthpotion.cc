@@ -8,7 +8,7 @@ HealthPotion::HealthPotion(const unsigned int &healAmount, const Vec2i &position
 HealthPotion::~HealthPotion(){}
 
 string HealthPotion::GetName()const{
-  string retVal = "health potion";
+  string retVal = "edible jerky";
   if(!m_LookedAt){
     retVal = Item::GetName();
   }
@@ -23,7 +23,7 @@ MapType HealthPotion::GetType()const{
 }
 string HealthPotion::GetDescription(){
   m_LookedAt = true;
-  return "It's a health potion.";
+  return "It's still edible jerky.";
 }
 string HealthPotion::GetUsed(Character &user){
   string retVal = user.Heal(m_HealAmount);

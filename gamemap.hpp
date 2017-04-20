@@ -38,7 +38,6 @@ class GameMap {
   unsigned short TotalArea() const;
 public:
   static int const DIRECTIONS[8][2];
-  // TODO: mapwide fill pathfinding
   GameMap(const MapSpec &, RNG *gen);
   ~GameMap();
   string ToString() const;

@@ -1,0 +1,17 @@
+Legend:
+
+# = Wall tile: Can't be walked on. Can't be interacted with.
+
+. = Floor tile: Can be walked on. Can't be interacted with.
+
+@ = You: Represents your position on the map. Can't be walked on. Can be interacted with.
+
+p = Pig: Represents an enemy pig. Attack these. Can't be walked on. Can be interacted with.
+
+? = Unknown Item: Represents an item. Look at these to figure out what they are. Can't be walked on. Can be interacted with.
+
+J = Jerky: Represents edible jerky. Eat (use) these to regain health. Can't be walked on. Can be interacted with.
+
+R = Rotten Jerky: Represents rotten jerky. Eat (use) at your own risk. Can't be walked on. Can be interacted with.
+
+> = Stairs: Represents stairs. Walk on them to go to the next level. Once you leave a level, you can't go back. Can't be walked on. Can be interacted with.
