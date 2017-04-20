@@ -10,6 +10,7 @@ MapType Item::GetType()const{
   return MapType::unknown;
 }
 string Item::TakeDamage(const int&){
+  string retVal = (GetName() + " is destroyed");
   m_pMap->TryRemoveEntityAt(GetPosition());
-  return (GetName() + " is destroyed");
+  return retVal;
 }
