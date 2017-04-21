@@ -182,7 +182,7 @@ bool Character::IsDead()const{
 }
 string Character::ToString()const{
   stringstream ss;
-  ss << Capitalize(GetName()) << " Health: " << m_Health << "/" << m_MaxHealth << " Attack: " << m_Attack << " Defense: " << m_Defense << endl;
+  ss << Capitalize(GetName()) << ": Health: " << m_Health << "/" << m_MaxHealth << " Attack: " << m_Attack << " Defense: " << m_Defense << endl;
   ss << "Actions: " << m_Actions << "/" << m_MaxActions << endl;
   return ss.str();
 }
