@@ -131,8 +131,6 @@ string InManager::ToString(){
 
   stringstream ss;
 
-  ss << endl << endl << "__________HELP__________" << endl << endl;
-
   for(auto &term : m_ValidTerms){
     ss << term << "(" << INPUTTYPESTRING[(int)m_TypeMap[term]] << ")" ":" << endl;
     ss << "Alternatives: ";

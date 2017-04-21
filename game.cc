@@ -107,11 +107,13 @@ void Game::ResetWorld(){
   CreateWorld();
 }
 void Game::MainLoop(){
+  static string DIRECTIONSTRING = "NW N NE\n W * E\nSW S SE\n";
   string input;
   while(m_IsPlaying && !m_IsGameOver){
     while(m_IsPlaying && !m_IsGameOver && m_pPlayer->GetActions() > 0){
       MakeSpace();
       cout << m_pMap[m_Level]->ToString();
+      cout << DIRECTIONSTRING;
       cout << m_LogString << endl;
       cout << m_pPlayer->ToString() << endl;
       cout << "Your action (h for help): ";
@@ -206,7 +208,7 @@ void Game::RedoMacro(){
   PushLog(m_pPlayer->RedoAction(false));
 }
 void Game::HelpMacro(){
-  cout << m_pInput->ToString() << endl;
+  cout << endl << endl << "__________HELP__________" << endl << endl;
   fstream fs;
   fs.open("legend");
   string tempString;
@@ -214,6 +216,8 @@ void Game::HelpMacro(){
     cout << tempString << endl;
   }
   fs.close();
+  cout << endl << "Dictionary: " << endl << endl;
+  cout << m_pInput->ToString() << endl;
   cout << endl << "Press enter to continue: ";
   string temp;
   getline(cin, temp);
